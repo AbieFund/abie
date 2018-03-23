@@ -1,4 +1,4 @@
-/* Part of this contract is from the solidity documentation
+/ Part of this contract is from the solidity documentation
 TODO: Set a license.
 */
 
@@ -63,23 +63,21 @@ contract AbieFund {
 
     /// Require at least price to be paid.
     modifier costs(uint price) {
-        if (msg.value<price)
-            throw;
+        require(msg.value>=price);
         _;
     }
 
     /// Require the caller to be a member.
     modifier isMember() {
-        if(!isValidMember(msg.sender))
-            throw;
+        require(isValidMember(msg.sender));
         _;
     }
 
 
     /// @param initialMembers First members of the organization.
-    function AbieFund(address[] initialMembers) {
+    function AbieFund(address[] initialMembers) public{
         for (uint i;i<initialMembers.length;++i){
-            Member member=members[initialMembers[i]];
+            Member storage member=members[initialMembers[i]];
             member.registration=now;
             if (i==0) { // initialize the list with the first member
                 memberList.first=initialMembers[0];
@@ -103,18 +101,18 @@ contract AbieFund {
       * @param proposalType 0 for AddMember, 1 for FundProject.
       * @param target account to delegate to.
       */
-    function setDelegate(uint8 proposalType, address target)
+    function setDelegate(uint8 proposalType, address target) public
     {
         members[msg.sender].delegate[proposalType] = target;
     }
 
     /// Receive funds.
-    function () payable {
+    function () payable public{
         Donated(msg.sender, msg.value);
     }
 
     /// Ask membership of the fund.
-    function askMembership () payable costs(membershipFee) {
+    function askMembership () payable public costs(membershipFee) {
         Donated(msg.sender,msg.value); // Register the donation.
 
         // Create a proposal to add the member.
@@ -134,7 +132,7 @@ contract AbieFund {
     }
 
     /// Add Proposal.
-    function addProposal (bytes32 _name, uint _value, bytes32 _data) payable costs(deposit) {
+    function addProposal (bytes32 _name, uint _value, bytes32 _data) payable public costs(deposit) {
         Donated(msg.sender,msg.value); // Register the donation.
 
         // Create a proposal to add the member.
@@ -158,20 +156,17 @@ contract AbieFund {
      *  @param proposalID ID of the proposal to count votes from.
      *  @param voteType Yes or No.
      */
-    function vote (uint proposalID, VoteType voteType) isMember {
-        Proposal proposal = proposals[proposalID];
-        if (proposal.vote[msg.sender] != VoteType.Abstain) // Has already voted.
-            throw;
-        if (proposal.endDate < now) // Vote is over.
-            throw;
-
+    function vote (uint proposalID, VoteType voteType) public isMember {
+        Proposal storage proposal = proposals[proposalID];
+        require(proposal.vote[msg.sender] == VoteType.Abstain); // Has already voted.
+        require(proposal.endDate >= now); // Vote is over.
         proposals[proposalID].vote[msg.sender] = voteType;
     }
 
     /** Count all the votes. You can call this function if gas limit is not an issue.
      *  @param proposalID ID of the proposal to count votes from.
      */
-    function countAllVotes (uint proposalID) {
+    function countAllVotes (uint proposalID) public{
         countVotes (proposalID,uint(-1));
     }
 
@@ -182,13 +177,11 @@ contract AbieFund {
      *  @param proposalID ID of the proposal to count votes from.
      *  @param max maximum to count.
      */
-    function countVotes (uint proposalID, uint max) {
-        Proposal proposal = proposals[proposalID];
+    function countVotes (uint proposalID, uint max) public{
+        Proposal storage proposal = proposals[proposalID];
         address current;
-        if (proposal.endDate > now) // You can't count while the vote is not over.
-            throw;
-        if (proposal.lastMemberCounted == COUNTED) // The count is already over
-            throw;
+        require (proposal.endDate <= now); // You can't count while the vote is not over.
+        require (proposal.lastMemberCounted != COUNTED); // The count is already over
 
         if (proposal.lastMemberCounted == NOT_COUNTED)
             current = memberList.first;
@@ -196,14 +189,14 @@ contract AbieFund {
             current = proposal.lastMemberCounted;
 
         while (max-- != 0) {
-            Member member=members[current];
+            Member storage member = members[current];
             address delegate=current;
             if(isValidMember(current)) {
                 uint depth=0;
                 // Seach the final vote.
                 while (true){
-                    VoteType vote=proposal.vote[delegate];
-                    if (vote==VoteType.Abstain) { // Look at the delegate
+                    VoteType voteNow = proposal.vote[delegate];
+                    if (voteNow==VoteType.Abstain) { // Look at the delegate
                         depth+=1;
                         delegate=members[delegate].delegate[uint(proposal.proposalType)]; // Find the delegate.
                         if (delegate==current // The delegation chain forms a circle.
@@ -212,10 +205,10 @@ contract AbieFund {
                            break;
                         }
                     }
-                    if (vote==VoteType.Yes) {
+                    if (voteNow==VoteType.Yes) {
                         proposal.voteYes+=1;
                         break;
-                    } else if (vote==VoteType.No) {
+                    } else if (voteNow==VoteType.No) {
                         proposal.voteNo+=1;
                         break;
                     }
@@ -234,12 +227,10 @@ contract AbieFund {
 
     }
 
-    function executeAddMemberProposal(uint proposalID) {
-        Proposal proposal = proposals[proposalID];
-        if (proposal.proposalType != ProposalType.AddMember) // Not a proposal to add a member.
-            throw;
-        if (!isExecutable(proposalID)) // Proposal was not approved.
-            throw;
+    function executeAddMemberProposal(uint proposalID) public {
+        Proposal storage proposal = proposals[proposalID];
+        require (proposal.proposalType == ProposalType.AddMember); // Not a proposal to add a member.
+        require (isExecutable(proposalID)); // Proposal was not approved.
         proposal.executed=true; // The proposal will be executed.
         addMember(proposal.recipient);
     }
@@ -250,27 +241,27 @@ contract AbieFund {
      *  @param member member to get the delegate from.
      *  @param proposalType 0 for AddMember, 1 for FundProject.
      */
-    function getDelegate(address member, uint8 proposalType) constant returns (address){
+    function getDelegate(address member, uint8 proposalType) public constant returns (address){
         return members[member].delegate[proposalType];
     }
 
     /** Return true if the proposal is validated, false otherwise.
      *  @param proposalID ID of the proposal to count votes from.
      */
-    function isExecutable(uint proposalID) constant returns (bool) {
-        Proposal proposal = proposals[proposalID];
+    function isExecutable(uint proposalID) public constant returns (bool) {
+        Proposal storage proposal = proposals[proposalID];
 
         if (proposal.lastMemberCounted != COUNTED) // Not counted yet.
             return false;
         if (proposal.executed) // The proposal has already been executed.
             return false;
-        if (proposal.value>this.balance) // Not enough to execute it.
+        if (proposal.value > address(this).balance) // Not enough to execute it.
             return false;
 
         return (proposal.voteYes>proposal.voteNo);
     }
 
-    function isValidMember(address m) constant returns(bool) {
+    function isValidMember(address m) public constant returns(bool) {
         if (members[m].registration==0) // Not a member.
             return false;
         if (members[m].registration+registrationTime<now) // Has expired.
