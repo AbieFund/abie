@@ -21,7 +21,7 @@ npm install -g ganache-cli
 Run it:
 
 ```
-ganache-cli --port 9545
+yarn ganache-cli --port 9545
 ```
 
 In a new tab:
