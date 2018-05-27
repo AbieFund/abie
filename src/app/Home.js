@@ -10,7 +10,7 @@ import '../www/styles/Proposal.scss'
 const TESTRPC_HOST = 'localhost'
 const TESTRPC_PORT = '9545'
 
-class Proposal extends Component {
+class Home extends Component {
 
   state = {
     web3: false,
@@ -25,6 +25,7 @@ class Proposal extends Component {
     valueDeposit: 0,
     dataDeposit: '',
     proposals: [],
+    search: null,
   }
 
   componentDidMount() {
@@ -73,6 +74,12 @@ class Proposal extends Component {
 
   handleChange = field => ({ target: { value } }) => this.setState({ [field]: value })
 
+  search = () => {
+    this.state.metaContract.at(this.state.search)
+      .then((contract) => contract.contractBalance())
+      .then(result => console.log(result))
+      .catch(err => console.log(err))
+  }
   setDelegate = () => {
     this.state.metaContract.at(this.state.addressContract)
       .then((contract) => contract.setDelegate(
@@ -167,6 +174,10 @@ class Proposal extends Component {
         <h1>Abie</h1>
         <p>Balance : {this.state.balance}</p>
         <p>
+            Enter Address <input type="text" onChange={this.handleChange('search')} />
+            <button onClick={this.search}>Search</button>
+        </p>
+        <p>
             Set Delegate <input type="text" onChange={this.handleChange('delegate')} />
             <button onClick={this.setDelegate}>Add address</button>
         </p>
@@ -213,4 +224,4 @@ class Proposal extends Component {
   }
 }
 
-export default Proposal
+export default Home
