@@ -76,9 +76,26 @@ class Home extends Component {
 
   search = () => {
     this.state.metaContract.at(this.state.search)
-      .then((contract) => contract.contractBalance())
-      .then(result => console.log(result))
+      .then((contract) => {
+        this.handleNameValue(contract.name())
+        return contract.contractBalance()
+      })
+      .then(result => {
+        const etherValue = web3.fromWei(result, 'ether')
+        this.setState({
+          'balance': etherValue
+        })
+        window.location = `http://abie.fund/c/${this.state.search}`;
+      })
       .catch(err => console.log(err))
+  }
+
+  handleNameValue(name) {
+    name.then(result => {
+      this.setState({
+        name: result
+      })
+    });
   }
   setDelegate = () => {
     this.state.metaContract.at(this.state.addressContract)
@@ -172,7 +189,8 @@ class Home extends Component {
     return (
       <div id="container">
         <h1>Abie</h1>
-        <p>Balance : {this.state.balance}</p>
+        <p>Balance : {this.state.balance.toString()} ETH</p>
+        <p>{(this.state.name) ? `Name:  ${this.state.name}` : ''}</p>
         <p>
             Enter Address <input type="text" value={this.state.search} onChange={this.handleChange('search')} />
             <button onClick={this.search}>Search</button>
