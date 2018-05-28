@@ -7,10 +7,10 @@ import Abie from '../../build/contracts/Abie.json'
 
 import '../www/styles/Proposal.scss'
 
-const TESTRPC_HOST = 'localhost'
+const TESTRPC_HOST = 'ropsten.infura.io/qnR8Jknp1cgCbw5mv5cU'
 const TESTRPC_PORT = '9545'
 
-class Proposal extends Component {
+class Home extends Component {
 
   state = {
     web3: false,
@@ -25,6 +25,7 @@ class Proposal extends Component {
     valueDeposit: 0,
     dataDeposit: '',
     proposals: [],
+    search: '0xc42e30da7cb0087e6ad9200f876b084e8f72c040',
   }
 
   componentDidMount() {
@@ -35,7 +36,7 @@ class Proposal extends Component {
         this.setState({web3: true})
         let meta = contract(Abie)
         this.setState({metaContract: meta})
-        let provider = new Web3.providers.HttpProvider(`http://${TESTRPC_HOST}:${TESTRPC_PORT}`)
+        let provider = new Web3.providers.HttpProvider(`https://${TESTRPC_HOST}:${TESTRPC_PORT}`)
         meta.setProvider(provider)
         const web3RPC = new Web3(provider)
         this.setState({web3RPC})
@@ -73,6 +74,29 @@ class Proposal extends Component {
 
   handleChange = field => ({ target: { value } }) => this.setState({ [field]: value })
 
+  search = () => {
+    this.state.metaContract.at(this.state.search)
+      .then((contract) => {
+        this.handleNameValue(contract.name())
+        return contract.contractBalance()
+      })
+      .then(result => {
+        const etherValue = web3.fromWei(result, 'ether')
+        this.setState({
+          'balance': etherValue
+        })
+        window.location = `http://abie.fund/c/${this.state.search}`;
+      })
+      .catch(err => console.log(err))
+  }
+
+  handleNameValue(name) {
+    name.then(result => {
+      this.setState({
+        name: result
+      })
+    });
+  }
   setDelegate = () => {
     this.state.metaContract.at(this.state.addressContract)
       .then((contract) => contract.setDelegate(
@@ -165,7 +189,12 @@ class Proposal extends Component {
     return (
       <div id="container">
         <h1>Abie</h1>
-        <p>Balance : {this.state.balance}</p>
+        <p>Balance : {this.state.balance.toString()} ETH</p>
+        <p>{(this.state.name) ? `Name:  ${this.state.name}` : ''}</p>
+        <p>
+            Enter Address <input type="text" value={this.state.search} onChange={this.handleChange('search')} />
+            <button onClick={this.search}>Search</button>
+        </p>
         <p>
             Set Delegate <input type="text" onChange={this.handleChange('delegate')} />
             <button onClick={this.setDelegate}>Add address</button>
@@ -213,4 +242,4 @@ class Proposal extends Component {
   }
 }
 
-export default Proposal
+export default Home
