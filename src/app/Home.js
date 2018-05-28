@@ -7,7 +7,7 @@ import Abie from '../../build/contracts/Abie.json'
 
 import '../www/styles/Proposal.scss'
 
-const TESTRPC_HOST = 'localhost'
+const TESTRPC_HOST = 'ropsten.infura.io/qnR8Jknp1cgCbw5mv5cU'
 const TESTRPC_PORT = '9545'
 
 class Home extends Component {
@@ -25,7 +25,7 @@ class Home extends Component {
     valueDeposit: 0,
     dataDeposit: '',
     proposals: [],
-    search: null,
+    search: '0xc42e30da7cb0087e6ad9200f876b084e8f72c040',
   }
 
   componentDidMount() {
@@ -36,7 +36,7 @@ class Home extends Component {
         this.setState({web3: true})
         let meta = contract(Abie)
         this.setState({metaContract: meta})
-        let provider = new Web3.providers.HttpProvider(`http://${TESTRPC_HOST}:${TESTRPC_PORT}`)
+        let provider = new Web3.providers.HttpProvider(`https://${TESTRPC_HOST}:${TESTRPC_PORT}`)
         meta.setProvider(provider)
         const web3RPC = new Web3(provider)
         this.setState({web3RPC})
@@ -174,7 +174,7 @@ class Home extends Component {
         <h1>Abie</h1>
         <p>Balance : {this.state.balance}</p>
         <p>
-            Enter Address <input type="text" onChange={this.handleChange('search')} />
+            Enter Address <input type="text" value={this.state.search} onChange={this.handleChange('search')} />
             <button onClick={this.search}>Search</button>
         </p>
         <p>
