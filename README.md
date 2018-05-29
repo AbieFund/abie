@@ -23,15 +23,13 @@ yarn ganache-cli --port 9545
 In a new tab:
 
 ```
-Clone the repository https://github.com/AbieFund/abie.git and
-
-```
+git clone https://github.com/AbieFund/abie.git
 cd Abie
 ```
 
 Then:
 
-``In a new tab
+```
 truffle migrate
 truffle test
 ```
