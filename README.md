@@ -14,7 +14,7 @@ Make sure you have latest versions of [npm](https://www.npmjs.com/), [Node](http
 npm install -g truffle
 npm install -g ganache-cli
 ```
-Run it:
+Run:
 
 ```
 yarn ganache-cli --port 9545
@@ -23,12 +23,19 @@ yarn ganache-cli --port 9545
 In a new tab:
 
 ```
-git clone https://github.com/AbieFund/abie.git
-cd abie
+Clone the repository https://github.com/AbieFund/abie.git and
 
+```
+cd Abie
+```
+
+Then:
+
+``In a new tab
 truffle migrate
 truffle test
 ```
+
 #### Versions
 
 * node v9.4.0
@@ -57,10 +64,9 @@ In your browser, you can now open the interface on port 3000:
 
 ## To do
 
-* [Create a contract search engine](https://github.com/AbieFund/abie/projects/1#card-9604722)
-* [Improve the interface](https://github.com/AbieFund/abie/projects/1#card-9604731)
 * [Deploy a DAO to main net, donate 10 ETH and call for attacks](https://github.com/AbieFund/abie/projects/1#card-9604705)
 * [Measure the participation and relevancy rates](https://github.com/AbieFund/abie/projects/1#card-9604708)
+* [Improve the interface](https://github.com/AbieFund/abie/projects/1#card-9604731)
 
 ## Resources
 
