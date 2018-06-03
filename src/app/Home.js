@@ -22,6 +22,7 @@ class Home extends Component {
     askMembership: null,
     web3RPC: null,
     name: '',
+    searchName: '',
     valueDeposit: 0,
     dataDeposit: '',
     proposals: [],
@@ -29,7 +30,7 @@ class Home extends Component {
   }
 
   componentDidMount() {
-    let testAbie = ''
+    let AbieAddress = '0xc42e30da7cb0087e6ad9200f876b084e8f72c040'
     setTimeout(() => {
       if (typeof web3 !== 'undefined') {
         // web3 = new Web3(web3.currentProvider);
@@ -41,16 +42,19 @@ class Home extends Component {
         const web3RPC = new Web3(provider)
         this.setState({web3RPC})
         // Get accounts.
-        web3RPC.eth.getAccounts((err, acc) => {
-          console.log(err)
-          console.log("accounts :", acc)
+        web3.eth.getAccounts((err, acc) => {
           this.setState({accounts: acc})
-          return meta.deployed()
-            .then(contract => {
-              this.setState({addressContract: contract.address})
-              this.getProposals(contract)
-            })
-            .catch(err => console.error(err))
+        // Get Details
+          meta.at(AbieAddress).then(contract => {
+            this.setState({ addressContract: contract.address})
+            this.getProposals(contract);
+          }).catch(err => console.log(err));
+          // return meta.deployed()
+          //   .then(contract => {
+          //     this.setState({addressContract: contract.address})
+          //     this.getProposals(contract)
+          //   })
+          //   .catch(err => console.error(err))
         })
       } else {
         alert("install Metamask or use Mist")
@@ -98,7 +102,8 @@ class Home extends Component {
     });
   }
   setDelegate = () => {
-    this.state.metaContract.at(this.state.addressContract)
+    if (typeof this.state.delegate !== 'undefined') {
+      this.state.metaContract.at(this.state.addressContract)
       .then((contract) => contract.setDelegate(
         0,
         this.state.delegate,
@@ -108,6 +113,9 @@ class Home extends Component {
       .catch(err => {
         console.error(err);
       })
+    } else {
+      console.log('Enter a valid data')
+    }
   }
 
   askMembership = () => {
@@ -190,7 +198,7 @@ class Home extends Component {
       <div id="container">
         <h1>Abie</h1>
         <p>Balance : {this.state.balance.toString()} ETH</p>
-        <p>{(this.state.name) ? `Name:  ${this.state.name}` : ''}</p>
+        <p>{(this.state.searchName) ? `Name:  ${this.state.searchName}` : ''}</p>
         <p>
             Enter Address <input type="text" value={this.state.search} onChange={this.handleChange('search')} />
             <button onClick={this.search}>Search</button>
