@@ -5,7 +5,7 @@ import { default as Web3 } from 'web3'
 import { default as contract } from 'truffle-contract'
 import Abie from '../../build/contracts/Abie.json'
 
-import '../www/styles/Proposal.scss'
+import '../www/styles/Home.scss'
 
 const TESTRPC_HOST = 'ropsten.infura.io/qnR8Jknp1cgCbw5mv5cU'
 const TESTRPC_PORT = '9545'
@@ -33,7 +33,6 @@ class Home extends Component {
     let AbieAddress = '0xc42e30da7cb0087e6ad9200f876b084e8f72c040'
     setTimeout(() => {
       if (typeof web3 !== 'undefined') {
-        // web3 = new Web3(web3.currentProvider);
         this.setState({web3: true})
         let meta = contract(Abie)
         this.setState({metaContract: meta})
@@ -89,7 +88,7 @@ class Home extends Component {
         this.setState({
           'balance': etherValue
         })
-        window.location = `http://abie.fund/c/${this.state.search}`;
+        //window.location = `http://abie.fund/c/${this.state.search}`;
       })
       .catch(err => console.log(err))
   }
@@ -101,6 +100,7 @@ class Home extends Component {
       })
     });
   }
+
   setDelegate = () => {
     if (typeof this.state.delegate !== 'undefined') {
       this.state.metaContract.at(this.state.addressContract)
