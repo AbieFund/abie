@@ -82,8 +82,8 @@ class Home extends Component {
           'balance': etherValue
         })
         setTimeout(() => {
-        // window.location = `http://abie.fund/c/${this.state.search}`;
-      }, 3000)
+        window.location = `http://abie.fund/c/${this.state.search}`;
+      }, 5000)
       })
       .catch(err => console.log(err))
   }
