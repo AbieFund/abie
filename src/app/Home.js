@@ -35,7 +35,15 @@ class Home extends Component {
       if (typeof web3 !== 'undefined') {
         // web3 = new Web3(web3.currentProvider);
         this.setState({web3: true})
-        let meta = contract(Abie)
+        this.loadProposals(AbieAddress);
+      } else {
+        alert("install Metamask or use Mist")
+      }
+    }, 1000)
+  }
+
+  loadProposals = address => {
+    let meta = contract(Abie)
         this.setState({metaContract: meta})
         let provider = new Web3.providers.HttpProvider(`https://${TESTRPC_HOST}:${TESTRPC_PORT}`)
         meta.setProvider(provider)
@@ -45,7 +53,7 @@ class Home extends Component {
         web3.eth.getAccounts((err, acc) => {
           this.setState({accounts: acc})
         // Get Details
-          meta.at(AbieAddress).then(contract => {
+          meta.at(address).then(contract => {
             this.setState({ addressContract: contract.address})
             this.getProposals(contract);
           }).catch(err => console.log(err));
@@ -56,11 +64,38 @@ class Home extends Component {
           //   })
           //   .catch(err => console.error(err))
         })
-      } else {
-        alert("install Metamask or use Mist")
-      }
-    }, 1000)
   }
+
+
+  handleChange = field => ({ target: { value } }) => this.setState({ [field]: value })
+
+  search = () => {
+    this.state.metaContract.at(this.state.search)
+      .then((contract) => {
+        this.handleNameValue(contract.name())
+        this.loadProposals(this.state.search);
+        return contract.contractBalance()
+      })
+      .then(result => {
+        const etherValue = web3.fromWei(result, 'ether')
+        this.setState({
+          'balance': etherValue
+        })
+        setTimeout(() => {
+        // window.location = `http://abie.fund/c/${this.state.search}`;
+      }, 3000)
+      })
+      .catch(err => console.log(err))
+  }
+
+  handleNameValue(name) {
+    name.then(result => {
+      this.setState({
+        name: result
+      })
+    });
+  }
+
 
   getProposals = contract => {
     this.state.metaContract.at(this.state.addressContract)
@@ -76,31 +111,6 @@ class Home extends Component {
       .catch(err => console.error(err))
   }
 
-  handleChange = field => ({ target: { value } }) => this.setState({ [field]: value })
-
-  search = () => {
-    this.state.metaContract.at(this.state.search)
-      .then((contract) => {
-        this.handleNameValue(contract.name())
-        return contract.contractBalance()
-      })
-      .then(result => {
-        const etherValue = web3.fromWei(result, 'ether')
-        this.setState({
-          'balance': etherValue
-        })
-        window.location = `http://abie.fund/c/${this.state.search}`;
-      })
-      .catch(err => console.log(err))
-  }
-
-  handleNameValue(name) {
-    name.then(result => {
-      this.setState({
-        name: result
-      })
-    });
-  }
   setDelegate = () => {
     if (typeof this.state.delegate !== 'undefined') {
       this.state.metaContract.at(this.state.addressContract)
