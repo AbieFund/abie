@@ -85,9 +85,9 @@ class Home extends Component {
       .then(result => {
         const etherValue = web3.fromWei(result, 'ether')
         this.setState({'balance': etherValue})
-        setTimeout(() => {
-          window.location = `http://abie.fund/c/${this.state.search}`;
-        }, 5000)
+        // setTimeout(() => {
+        //   window.location = `http://abie.fund/c/${this.state.search}`;
+        // }, 5000)
       })
       .catch(err => console.log(err))
   }
