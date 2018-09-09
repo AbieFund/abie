@@ -28,7 +28,5 @@ Click on `Search`.
 
 * [Project Website](http://abie.fund/)
 * [Abie Wiki](https://github.com/AbieFund/abie/wiki/Abie-Wiki)
-* [Using Abie with Remix (video)](https://youtu.be/NCzbua9R_eE)
-* [When you test Abie](https://imgur.com/a/m7fFvVi)
 
 Feel free to join the [Riot](https://riot.im/app/#/room/#abie:matrix.org) discussion chan!
