@@ -28,9 +28,6 @@ Click on `Search`.
 
 * [Project Website](http://abie.fund/)
 * [Abie Wiki](https://github.com/AbieFund/abie/wiki/Abie-Wiki)
-<<<<<<< HEAD
 * [Using Abie with Remix (video)](https://youtu.be/NCzbua9R_eE)
-=======
->>>>>>> 789169a10d009b6618590b64529600abc70d5f48
 
 Feel free to join the [Riot](https://riot.im/app/#/room/#abie:matrix.org) discussion chan!
