@@ -1,10 +1,7 @@
-/* Part of this contract is from the solidity documentation
-MIT License: https://github.com/AbieFund/abie/blob/master/LICENSE
-*/
-
+//Part of this contract is from the solidity documentation
 pragma solidity ^0.4.8;
 
-/// @title The easy fund
+/// @title Fund for donations.
 contract Abie {
 
     bytes32 public name;
@@ -76,10 +73,7 @@ contract Abie {
     }
 
     /// @param initialMembers First members of the organization.
-    /// @param _name The name of the DAO
-    /// @param _statement The statement of intent of the DAO
-    function Abie(bytes32 _name, bytes32 _statement, address[] initialMembers) public {
-
+    function Abie(bytes32 _name, bytes32 _statement, address[] initialMembers) public{
         name=_name;
         statement=_statement;
         for (uint i;i<initialMembers.length;++i){
@@ -120,6 +114,7 @@ contract Abie {
 
     /// Receive funds.
     function () payable public{
+        // require(msg.value+address(this).balance >= 1000000000000000000000000);
         Donated(msg.sender, msg.value);
     }
 
@@ -136,8 +131,7 @@ contract Abie {
           value: 0x0,
           data: 0x0,
           proposalType: ProposalType.AddMember,
-          endDate: now + 2 minutes,
-          //voteLength[uint256(ProposalType.AddMember)],
+          endDate: now + voteLength[uint256(ProposalType.AddMember)],
           lastMemberCounted: 0,
           executed: false
         }));
@@ -146,9 +140,8 @@ contract Abie {
     }
 
     /// Add Proposal.
-    function addProposal (bytes32 _name, uint _value, bytes32 _data) payable public costs(fee) {
+    function addProposal (bytes32 _name, uint _value, bytes32 _data) payable public costs(fee) {        //require(msg.value+address(this).balance >= address(this).balance);
         Donated(msg.sender,msg.value); // Register the donation.
-
         // Create a proposal to add the member.
         proposals.push(Proposal({
           name: _name,
@@ -257,7 +250,6 @@ contract Abie {
         require (isExecutable(proposalID)); // rejected if not executable
         require(proposal.executed == false); // rejected if executed already
         require (beneficiary == msg.sender); // rejected if caller is not the beneficiary
-        proposal.executed = true; // The proposal is flagged ‘executed’.
         proposal.executed = true; // The proposal was executed.
         beneficiary.transfer(check); // The beneficiary gets the requested amount.
     }

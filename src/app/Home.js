@@ -3,11 +3,9 @@ import request from 'superagent'
 import {default as Web3} from 'web3'
 import {default as contract} from 'truffle-contract'
 import Abie from '../../build/contracts/Abie.json'
-
 import '../www/styles/Home.scss'
 
-const TESTRPC_HOST = 'ropsten.infura.io/qnR8Jknp1cgCbw5mv5cU'
-const TESTRPC_PORT = '9545'
+const TESTRPC_HOST = 'ropsten.infura.io'
 
 class Home extends Component {
 
@@ -25,11 +23,12 @@ class Home extends Component {
     valueDeposit: 0,
     dataDeposit: '',
     proposals: [],
-    search: '0xc42e30da7cb0087e6ad9200f876b084e8f72c040'
+    statement:'',
+    search: '0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3'
   }
 
   componentDidMount() {
-    let AbieAddress = '0xc42e30da7cb0087e6ad9200f876b084e8f72c040'
+    let AbieAddress = this.state.search;
     setTimeout(() => {
       if (typeof web3 !== 'undefined') {
         this.setState({web3: true})
@@ -43,11 +42,8 @@ class Home extends Component {
   loadProposals = address => {
     let meta = contract(Abie)
     this.setState({metaContract: meta})
-    let provider = new Web3
-      .providers
-      .HttpProvider(`https://${TESTRPC_HOST}:${TESTRPC_PORT}`)
-    meta.setProvider(provider)
-    const web3RPC = new Web3(provider)
+    meta.setProvider(web3.currentProvider)
+    const web3RPC = new Web3(web3.currentProvider)
     this.setState({web3RPC})
     // Get accounts.
     web3
@@ -62,9 +58,6 @@ class Home extends Component {
             this.getProposals(contract);
           })
           .catch(err => console.log(err));
-        // return meta.deployed()   .then(contract => {
-        // this.setState({addressContract: contract.address})
-        // this.getProposals(contract)   })   .catch(err => console.error(err))
       })
   }
 
@@ -85,9 +78,6 @@ class Home extends Component {
       .then(result => {
         const etherValue = web3.fromWei(result, 'ether')
         this.setState({'balance': etherValue})
-        // setTimeout(() => {
-        //   window.location = `http://abie.fund/c/${this.state.search}`;
-        // }, 5000)
       })
       .catch(err => console.log(err))
   }
@@ -107,7 +97,6 @@ class Home extends Component {
       .then(result => [...new Array(result.toNumber()).keys()])
       .then(range => (Promise.all(range.map(i => contract.proposals(i))).then(results => {
         this.setState({proposals: results})
-        // console.log(proposals)
       })))
       .catch(err => console.error(err))
   }
@@ -209,22 +198,27 @@ class Home extends Component {
   render() {
     return (
       <div id="container">
-        <h1>Abie</h1>
-        <p>Balance : {this
+        <h1>{this.state.name}</h1>
+        <p>Balance: {this
             .state
             .balance
-            .toString()}
-          ETH</p>
-        <p>{(this.state.searchName)
-            ? `Name:  ${this.state.searchName}`
-            : ''}</p>
+            .toString()} ETH</p>
+
         <p>
-          Enter Address
+          Contract Address:
           <input
             type="text"
             value={this.state.search}
             onChange={this.handleChange('search')}/>
           <button onClick={this.search}>Search</button>
+        </p>
+        <p>
+          Statement of intent:
+
+        </p>
+        <p>
+          List of members:
+
         </p>
         <p>
           Set Delegate
@@ -240,7 +234,7 @@ class Home extends Component {
           Add proposal&nbsp;
           <input
             type="text"
-            onChange={this.handleChange('name')}
+            onChange={this.handleChange('proposalName')}
             placeholder="Name of the proposition (hex)"/>
           <input
             type="text"
