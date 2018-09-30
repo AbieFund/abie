@@ -116,7 +116,7 @@ class Home extends Component {
       .then((contract) => {
         this.handleNameValue(contract.name())
         this.loadProposals(this.state.search);
-        this.getStatement(this.state.search);
+        this.loadStatements(this.state.search);
         this.loadMemberList(this.state.search);
         return contract.contractBalance()
       })
@@ -263,6 +263,14 @@ class Home extends Component {
       })
   }
 
+  countAllVotes = idx => {
+    console.log(this.state.addressContract);
+    this.state.metaContract.at(this.state.addressContract)
+        .then(contract => contract.countAllVotes(idx))
+        .then(result => console.log(result))
+        .catch(err => console.log(err));
+  }
+
   render() {
     const { name, balance, search, proposals, statement, members } = this.state;
     return (
@@ -353,6 +361,8 @@ class Home extends Component {
                   color: "red"
                 }}
                   onClick={() => this.voteNo(index)}>Vote No</button>
+                <button
+                  onClick={() => this.countAllVotes(index)}>Count all votes</button>
               </li>
             </ul>
           ))}
