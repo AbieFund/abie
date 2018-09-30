@@ -24,6 +24,7 @@ class Home extends Component {
     dataDeposit: '',
     proposals: [],
     statement:'',
+    members: [],
     search: '0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3'
   }
 
@@ -33,6 +34,8 @@ class Home extends Component {
       if (typeof web3 !== 'undefined') {
         this.setState({web3: true})
         this.loadProposals(AbieAddress);
+        this.loadMemberList(AbieAddress);
+        this.loadStatements(AbieAddress);
       } else {
         alert("install Metamask or use Mist")
       }
@@ -61,6 +64,46 @@ class Home extends Component {
       })
   }
 
+  loadMemberList = address => {
+    let meta = contract(Abie)
+    this.setState({metaContract: meta})
+    meta.setProvider(web3.currentProvider)
+    const web3RPC = new Web3(web3.currentProvider)
+    this.setState({web3RPC})
+    web3
+      .eth
+      .getAccounts((err, acc) => {
+        this.setState({accounts: acc})
+        meta
+          .at(address)
+          .then(contract => {
+            this.setState({addressContract: contract.address})
+            this.getMembersList(contract);
+          })
+          .catch(err => console.log(err));
+      })
+  }
+
+  loadStatements = address => {
+    let meta = contract(Abie)
+    this.setState({metaContract: meta})
+    meta.setProvider(web3.currentProvider)
+    const web3RPC = new Web3(web3.currentProvider)
+    this.setState({web3RPC})
+    web3
+      .eth
+      .getAccounts((err, acc) => {
+        this.setState({accounts: acc})
+        meta
+          .at(address)
+          .then(contract => {
+            this.setState({addressContract: contract.address})
+            this.getStatements(contract);
+          })
+          .catch(err => console.log(err));
+      })
+  }
+
   handleChange = field => ({target: {
       value
     }}) => this.setState({[field]: value})
@@ -73,6 +116,8 @@ class Home extends Component {
       .then((contract) => {
         this.handleNameValue(contract.name())
         this.loadProposals(this.state.search);
+        this.getStatement(this.state.search);
+        this.loadMemberList(this.state.search);
         return contract.contractBalance()
       })
       .then(result => {
@@ -98,6 +143,29 @@ class Home extends Component {
       .then(range => (Promise.all(range.map(i => contract.proposals(i))).then(results => {
         this.setState({proposals: results})
       })))
+      .catch(err => console.error(err))
+  }
+
+  getMembersList = contract => {
+    this
+      .state
+      .metaContract
+      .at(this.state.addressContract)
+      .then(contract => contract.nbMembers())
+      .then(result => [...new Array(result.toNumber()).keys()])
+      .then(range => (Promise.all(range.map(i => contract.members(i))).then(results => {
+        this.setState({members: results})
+      })))
+      .catch(err => console.error(err))
+  }
+
+  getStatements = contract => {
+    this
+      .state
+      .metaContract
+      .at(this.state.addressContract)
+      .then(contract => contract.statement())
+      .then(result => this.setState({ statement: result }))
       .catch(err => console.error(err))
   }
 
@@ -196,30 +264,36 @@ class Home extends Component {
   }
 
   render() {
+    const { name, balance, search, proposals, statement, members } = this.state;
     return (
       <div id="container">
-        <h1>{this.state.name}</h1>
-        <p>Balance: {this
-            .state
-            .balance
+        <h1>{name}</h1>
+        <p>Balance: {balance
             .toString()} ETH</p>
 
         <p>
           Contract Address:
           <input
             type="text"
-            value={this.state.search}
+            value={search}
             onChange={this.handleChange('search')}/>
           <button onClick={this.search}>Search</button>
         </p>
         <p>
           Statement of intent:
-
         </p>
+        {statement}
         <p>
           List of members:
-
         </p>
+        {members
+          .map((obj, index) => (
+            <ul key={index}>
+              <li style={{
+                listStyle: 'none'
+              }}>Address: {obj[1].toString()}</li>
+            </ul>
+          ))}
         <p>
           Set Delegate
           <input type="text" onChange={this.handleChange('delegate')}/>
@@ -252,9 +326,7 @@ class Home extends Component {
           Proposals
         </p>
 
-        {this
-          .state
-          .proposals
+        {proposals
           .map((obj, index) => (
             <ul key={index}>
               <li>Proposal name: {web3.toAscii(obj[0])}</li>
