@@ -273,6 +273,27 @@ class Home extends Component {
         })
         .then(result => {
           this.setState({ loading: false });
+          window.location.reload();
+          console.log(result);
+        })
+        .catch(err => {
+          this.setState({ loading: false });
+          console.log(err)
+        });
+  }
+
+  claim = idx => {
+    this.setState({ loading: true });
+    this.state.metaContract.at(this.state.addressContract)
+        .then(contract => {
+          return contract.claim(idx, {
+            value: web3.toWei(0.1, "ether"),
+            from: this.state.accounts[0],
+          })
+        })
+        .then(result => {
+          this.setState({ loading: false });
+          window.location.reload();
           console.log(result);
         })
         .catch(err => {
@@ -368,6 +389,9 @@ class Home extends Component {
                 <button
                   onClick={() => this.countAllVotes(index)}>Count all votes</button>
               </li>
+              <li>
+                <button onClick={() => this.claim(index)}>Claim</button>
+                  </li>
             </ul>
           ))}
 
