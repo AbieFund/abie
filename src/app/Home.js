@@ -4,6 +4,8 @@ import {default as Web3} from 'web3'
 import {default as contract} from 'truffle-contract'
 import Abie from '../../build/contracts/Abie.json'
 import '../www/styles/Home.scss'
+import { Loader } from 'react-overlay-loader';
+// import 'react-overlay-loader/styles.css';
 
 const TESTRPC_HOST = 'ropsten.infura.io'
 
@@ -24,8 +26,9 @@ class Home extends Component {
     dataDeposit: '',
     proposals: [],
     statement:'',
-    members: [],
-    search: '0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3'
+    members: '',
+    search: '0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3',
+    loading: false
   }
 
   componentDidMount() {
@@ -151,11 +154,8 @@ class Home extends Component {
       .state
       .metaContract
       .at(this.state.addressContract)
-      .then(contract => contract.nbMembers())
-      .then(result => [...new Array(result.toNumber()).keys()])
-      .then(range => (Promise.all(range.map(i => contract.members(i))).then(results => {
-        this.setState({members: results})
-      })))
+      .then(contract => contract.isValidMember(this.state.accounts[0]))
+      .then(result => (result) ? this.setState({ members: 'You are a member of this DAO.'}) : this.setState({ members: 'You are not a member of this DAO.'}))
       .catch(err => console.error(err))
   }
 
@@ -264,17 +264,29 @@ class Home extends Component {
   }
 
   countAllVotes = idx => {
-    console.log(this.state.addressContract);
-    this.state.metaContract.at(this.state.addressContract)
-        .then(contract => contract.countAllVotes(idx))
-        .then(result => console.log(result))
-        .catch(err => console.log(err));
+    this.setState({ loading: true });
+    this.state.metaContract.at(this.state.search)
+        .then(contract => {
+          return contract.countAllVotes(idx, {
+            value: 0,
+            from: this.state.accounts[0]
+          })
+        })
+        .then(result => {
+          this.setState({ loading: false });
+          console.log(result);
+        })
+        .catch(err => {
+          this.setState({ loading: false });
+          console.log(err)
+        });
   }
 
   render() {
-    const { name, balance, search, proposals, statement, members } = this.state;
+    const { name, balance, search, proposals, statement, members, loading } = this.state;
     return (
       <div id="container">
+        <Loader fullPage loading={loading} />
         <h1>{name}</h1>
         <p>Balance: {balance
             .toString()} ETH</p>
@@ -294,14 +306,7 @@ class Home extends Component {
         <p>
           List of members:
         </p>
-        {members
-          .map((obj, index) => (
-            <ul key={index}>
-              <li style={{
-                listStyle: 'none'
-              }}>Address: {obj[1].toString()}</li>
-            </ul>
-          ))}
+        <p>{members}</p>
         <p>
           Set Delegate
           <input type="text" onChange={this.handleChange('delegate')}/>
