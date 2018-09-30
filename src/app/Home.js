@@ -5,7 +5,6 @@ import {default as contract} from 'truffle-contract'
 import Abie from '../../build/contracts/Abie.json'
 import '../www/styles/Home.scss'
 import { Loader } from 'react-overlay-loader';
-// import 'react-overlay-loader/styles.css';
 
 const TESTRPC_HOST = 'ropsten.infura.io'
 
