@@ -122,6 +122,34 @@ class Home extends Component {
       }
     }
 
+    handleChangeRequestAmount = value => {
+      this.setState({
+        valueDeposit: value
+      })
+    }
+
+    handleChangePropsalName = value => {
+      let hexValue = this.toHex(value);
+      this.setState({
+        name: hexValue
+      })
+    }
+
+    handleChangeDescription = value => {
+      let hexValue = `0x${this.toHex(value)}`;
+      this.setState({
+        dataDeposit: hexValue
+      })
+    }
+
+    toHex = (str) => {
+      let result = '';
+      for (var i=0; i<str.length; i++) {
+        result += str.charCodeAt(i).toString(16);
+      }
+      return result;
+    }
+
   search = () => {
     this
       .state
@@ -361,15 +389,15 @@ class Home extends Component {
           Add proposal&nbsp;
           <input
             type="text"
-            onChange={this.handleChange('proposalName')}
+            onChange={e => this.handleChangePropsalName(e.target.value)}
             placeholder="Name of the proposition (hex)"/>
           <input
             type="text"
-            onChange={this.handleChangeRequestAmount}
+            onChange={e => this.handleChangeRequestAmount(e.target.value)}
             placeholder="Requested amount (Wei)"/>
           <input
             type="text"
-            onChange={this.handleChangeDescription}
+            onChange={e => this.handleChangeDescription(e.target.value)}
             placeholder="Link IPFS"/>
           <button onClick={this.addProposal}>Submit add proposal
           </button>
