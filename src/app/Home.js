@@ -26,8 +26,13 @@ class Home extends Component {
     proposals: [],
     statement:'',
     members: '',
+    addresses: [
+      {name: '0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3', value: '0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3'}, 
+      {name: '0xc42e30da7cb0087e6ad9200f876b084e8f72c040', value: '0xc42e30da7cb0087e6ad9200f876b084e8f72c040'}, {name:'Other', value: 'Other'}
+    ],
     search: '0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3',
-    loading: false
+    loading: false,
+    searchBox: false
   }
 
   componentDidMount() {
@@ -108,7 +113,42 @@ class Home extends Component {
 
   handleChange = field => ({target: {
       value
-    }}) => this.setState({[field]: value})
+    }}) => {
+      if (value === 'Other') {
+        this.setState({ searchBox: true })
+      } else {
+        this.setState({ searchBox: false })
+        this.setState({[field]: value})
+      }
+    }
+
+    handleChangeRequestAmount = value => {
+      this.setState({
+        valueDeposit: value
+      })
+    }
+
+    handleChangePropsalName = value => {
+      let hexValue = this.toHex(value);
+      this.setState({
+        name: hexValue
+      })
+    }
+
+    handleChangeDescription = value => {
+      let hexValue = `0x${this.toHex(value)}`;
+      this.setState({
+        dataDeposit: hexValue
+      })
+    }
+
+    toHex = (str) => {
+      let result = '';
+      for (var i=0; i<str.length; i++) {
+        result += str.charCodeAt(i).toString(16);
+      }
+      return result;
+    }
 
   search = () => {
     this
@@ -209,7 +249,7 @@ class Home extends Component {
       .at(this.state.addressContract)
       .then((contract) => {
         return contract.addProposal(this.state.name, web3.toWei(this.state.valueDeposit, "ether"), this.state.dataDeposit, {
-          value: web3.toWei(1, "ether"),
+          value: web3.toWei(0.1, "ether"),
           from: this.state.accounts[0],
           gas: 4000000
         })
@@ -301,9 +341,29 @@ class Home extends Component {
           console.log(err)
         });
   }
+  
+  claim = idx => {
+    this.setState({ loading: true });
+    this.state.metaContract.at(this.state.addressContract)
+        .then(contract => {
+          return contract.claim(idx, {
+            value: web3.toWei(0.1, "ether"),
+            from: this.state.accounts[0],
+          })
+        })
+        .then(result => {
+          this.setState({ loading: false });
+          window.location.reload();
+          console.log(result);
+        })
+        .catch(err => {
+          this.setState({ loading: false });
+          console.log(err)
+        });
+  }
 
   render() {
-    const { name, balance, search, proposals, statement, members, loading } = this.state;
+    const { name, balance, searchBox, addresses, proposals, statement, members, loading } = this.state;
     return (
       <div id="container">
         <Loader fullPage loading={loading} />
@@ -313,19 +373,28 @@ class Home extends Component {
 
         <p>
           Contract Address:
-          <input
-            type="text"
-            value={search}
-            onChange={this.handleChange('search')}/>
-          <button onClick={this.search}>Search</button>
         </p>
+        <p>
+          <select onChange={this.handleChange('search')}>
+            {
+              addresses.map(item => <option key={item.value} value={item.value}>{item.name}</option>)
+            }
+          </select>
+        </p>
+        {
+          searchBox ? 
+            <p>
+              <input
+                type="text"
+                onChange={this.handleChange('search')}/>
+            </p>
+          : ''
+        }
+          <button onClick={this.search}>Search</button>
         <p>
           Statement of intent:
         </p>
         {statement}
-        <p>
-          List of members:
-        </p>
         <p>{members}</p>
         <p>
           Set Delegate
@@ -341,15 +410,15 @@ class Home extends Component {
           Add proposal&nbsp;
           <input
             type="text"
-            onChange={this.handleChange('proposalName')}
+            onChange={e => this.handleChangePropsalName(e.target.value)}
             placeholder="Name of the proposition (hex)"/>
           <input
             type="text"
-            onChange={this.handleChangeRequestAmount}
+            onChange={e => this.handleChangeRequestAmount(e.target.value)}
             placeholder="Requested amount (Wei)"/>
           <input
             type="text"
-            onChange={this.handleChangeDescription}
+            onChange={e => this.handleChangeDescription(e.target.value)}
             placeholder="Link IPFS"/>
           <button onClick={this.addProposal}>Submit add proposal
           </button>
