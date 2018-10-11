@@ -150,6 +150,14 @@ class Home extends Component {
       return result;
     }
 
+    fromHex = (hex) => {
+      let string = '';
+      for (var i = 0; i < hex.length; i += 2) {
+        string += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+      }
+      return string;
+    }
+
   search = () => {
     this
       .state
@@ -367,7 +375,7 @@ class Home extends Component {
     return (
       <div id="container">
         <Loader fullPage loading={loading} />
-        <h1>{name}</h1>
+        <h1>{this.fromHex(name)}</h1>
         <p>Balance: {balance
             .toString()} ETH</p>
 
