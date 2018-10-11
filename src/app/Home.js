@@ -306,7 +306,7 @@ class Home extends Component {
     this.setState({ loading: true });
     this.state.metaContract.at(this.state.search)
         .then(contract => {
-          return contract.countAllVotes(idx, {
+          return contract.countVotes(idx, 5, {
             value: 0,
             from: this.state.accounts[0]
           })
