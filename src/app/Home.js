@@ -402,7 +402,7 @@ class Home extends Component {
         <p>
           Statement of intent:
         </p>
-        {statement}
+        {this.fromHex(statement)}
         <p>{members}</p>
         <p>
           Set Delegate
@@ -439,7 +439,7 @@ class Home extends Component {
         {proposals
           .map((obj, index) => (
             <ul key={index}>
-              <li>Proposal name: {web3.toAscii(obj[0])}</li>
+              <li>Proposal name: {obj[0]}</li>
               <li>recipient: {obj[3].toString()}</li>
               <li>value: {obj[4].toNumber()}</li>
               <li>data: {'' + web3.toAscii(obj[5])}</li>
