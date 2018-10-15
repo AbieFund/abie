@@ -349,33 +349,13 @@ class Home extends Component {
           console.log(err)
         });
   }
-  
-  claim = idx => {
-    this.setState({ loading: true });
-    this.state.metaContract.at(this.state.addressContract)
-        .then(contract => {
-          return contract.claim(idx, {
-            value: web3.toWei(0.1, "ether"),
-            from: this.state.accounts[0],
-          })
-        })
-        .then(result => {
-          this.setState({ loading: false });
-          window.location.reload();
-          console.log(result);
-        })
-        .catch(err => {
-          this.setState({ loading: false });
-          console.log(err)
-        });
-  }
 
   render() {
     const { name, balance, searchBox, addresses, proposals, statement, members, loading } = this.state;
     return (
       <div id="container">
         <Loader fullPage loading={loading} />
-        <h1>{this.fromHex(name)}</h1>
+        <h1>{this.fromHex(name.replace("0x", ""))}</h1>
         <p>Balance: {balance
             .toString()} ETH</p>
 
@@ -402,7 +382,7 @@ class Home extends Component {
         <p>
           Statement of intent:
         </p>
-        {this.fromHex(statement)}
+        {this.fromHex(statement.replace("0x", ""))}
         <p>{members}</p>
         <p>
           Set Delegate
@@ -439,7 +419,7 @@ class Home extends Component {
         {proposals
           .map((obj, index) => (
             <ul key={index}>
-              <li>Proposal name: {obj[0]}</li>
+              <li>Proposal name: {this.fromHex(obj[0].replace("0x", ""))}</li>
               <li>recipient: {obj[3].toString()}</li>
               <li>value: {obj[4].toNumber()}</li>
               <li>data: {'' + web3.toAscii(obj[5])}</li>
