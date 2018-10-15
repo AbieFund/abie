@@ -257,7 +257,7 @@ class Home extends Component {
       .at(this.state.addressContract)
       .then((contract) => {
         return contract.addProposal(this.state.name, web3.toWei(this.state.valueDeposit, "ether"), this.state.dataDeposit, {
-          value: web3.toWei(0.1, "ether"),
+          value: web3.toWei(0.01, "ether"),
           from: this.state.accounts[0],
           gas: 4000000
         })
@@ -335,7 +335,7 @@ class Home extends Component {
     this.state.metaContract.at(this.state.addressContract)
         .then(contract => {
           return contract.claim(idx, {
-            value: web3.toWei(0.1, "ether"),
+            value: web3.toWei(0.01, "ether"),
             from: this.state.accounts[0],
           })
         })
