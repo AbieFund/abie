@@ -1,17 +1,25 @@
 //Part of this contract is from the solidity documentation
 pragma solidity ^0.4.8;
 
+/** Prepare fore deploymets:
+ *
+ * Add a *100 next to fee in askMembership
+ * Switch fee to 0.01 ether
+ * Set voteLenght = 15 days
+ *
+ */
+
 /// @title Fund for donations.
 contract Abie {
 
     bytes32 public name;
     bytes32 public statement;
-    uint public fee = 0.1 ether;
+    uint public fee = 0.001 ether;
     uint public nbMembers;
     uint public nbProposalsFund;
     uint public nbMembershipReq;
     uint public registrationTime = 1 years;
-    uint[2] public voteLength = [2 minutes, 2 minutes];
+    uint[2] public voteLength = [5 minutes, 5 minutes];
     uint MAX_DELEGATION_DEPTH=10;
     address NOT_COUNTED=0;
     address COUNTED=1;
@@ -131,7 +139,7 @@ contract Abie {
           value: 0x0,
           data: 0x0,
           proposalType: ProposalType.AddMember,
-          endDate: now + voteLength[uint256(ProposalType.AddMember)],
+          endDate: now + 5 minutes,
           lastMemberCounted: 0,
           executed: false
         }));
@@ -151,7 +159,7 @@ contract Abie {
           value: _value,
           data: _data,
           proposalType: ProposalType.FundProject,
-          endDate: now + 2 minutes,
+          endDate: now + 5 minutes,
           lastMemberCounted: 0,
           executed: false
         }));
