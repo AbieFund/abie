@@ -29,12 +29,14 @@ class Home extends Component {
     members: '',
     addresses: [
 
-{name: '0xeee060a985c02d330ba43735bd50f1ba259ac883', value: '0xeee060a985c02d330ba43735bd50f1ba259ac883'},
-{name: '0xce73d3bb0beb4e75bd214bd9f4311bd7cf489845', value: '0xce73d3bb0beb4e75bd214bd9f4311bd7cf489845'},
+
+      {name: '0x7f041abd5e84667b540370229b20a8fd4cdb8b09', value: '0x7f041abd5e84667b540370229b20a8fd4cdb8b09'},
+      {name: '0xeee060a985c02d330ba43735bd50f1ba259ac883', value: '0xeee060a985c02d330ba43735bd50f1ba259ac883'},
+      {name: '0xce73d3bb0beb4e75bd214bd9f4311bd7cf489845', value: '0xce73d3bb0beb4e75bd214bd9f4311bd7cf489845'},
       {name: '0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3', value: '0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3'},
       {name: '0xc42e30da7cb0087e6ad9200f876b084e8f72c040', value: '0xc42e30da7cb0087e6ad9200f876b084e8f72c040'}, {name:'Other', value: 'Other'}
     ],
-    search: '0xeee060a985c02d330ba43735bd50f1ba259ac883',
+    search: '0x7f041abd5e84667b540370229b20a8fd4cdb8b09',
     loading: false,
     searchBox: false
   }
@@ -50,7 +52,7 @@ class Home extends Component {
       } else {
         alert("install Metamask or use Mist")
       }
-    }, 1000)
+    }, 200)
   }
 
   loadProposals = address => {
@@ -263,7 +265,7 @@ class Home extends Component {
         return contract.addProposal(this.state.proposalName, web3.toWei(this.state.valueDeposit, "ether"), this.state.dataDeposit, {
           value: web3.toWei(0.001, "ether"),
           from: this.state.accounts[0],
-          gas: 4000000
+          gas: 400000
         })
       })
       .then(result => {
@@ -287,7 +289,7 @@ class Home extends Component {
         return contract.vote(idx, 1, {
           value: 0,
           from: this.state.accounts[0],
-          gas: 4000000
+          gas: 400000
         })
       })
       .then(result => console.log(result))
@@ -305,7 +307,7 @@ class Home extends Component {
         return contract.vote(idx, 2, {
           value: 0,
           from: this.state.accounts[0],
-          gas: 4000000
+          gas: 400000
         })
       })
       .then(result => console.log(result))
@@ -364,7 +366,7 @@ class Home extends Component {
             .toString()} ETH</strong></p>
 
         <p>
-        <strong>{this.state.search}</strong>
+        <strong><a href="https://kovan.etherscan.io/address/0x7f041abd5e84667b540370229b20a8fd4cdb8b09" >{this.state.search}</a></strong>
         </p>
         <p>
           <select onChange={this.handleChange('search')}>
@@ -389,7 +391,7 @@ class Home extends Component {
         <p>
           Set Delegate:&nbsp;
           <input type="text" onChange={this.handleChange('delegate')}/>
-          <button onClick={this.setDelegate}>Add address</button>
+          &nbsp;<button onClick={this.setDelegate}>Add address</button>
         </p>
         <button onClick={this.askMembership}>Request membership</button>
 
@@ -401,19 +403,19 @@ class Home extends Component {
           <input
             type="text"
             onChange={e => this.handleChangePropsalName(e.target.value)}
-            placeholder="I've planted a tree."/>&nbsp;&nbsp;
+            placeholder="Improve X"/>&nbsp;&nbsp;
 
             Amount (ETH): &nbsp;
             <input
             type="text"
             onChange={e => this.handleChangeRequestAmount(e.target.value)}
-            placeholder="1"/>&nbsp;&nbsp;
+            placeholder="0.01"/>&nbsp;&nbsp;
 
             Source: &nbsp;
             <input
             type="text"
             onChange={e => this.handleChangeDescription(e.target.value)}
-            placeholder="https://proofs.com"/>&nbsp;&nbsp;
+            placeholder="https://goo.gl/feCXWZ"/>&nbsp;&nbsp;
           <button onClick={this.addProposal}>Submit proposal
           </button>
         </p>
@@ -428,7 +430,7 @@ class Home extends Component {
               <li>proposal name: {this.fromHex(web3.toAscii(obj[0]))}</li>
               <li>recipient: {obj[3].toString()}</li>
               <li>value: {obj[4].toNumber()}</li>
-              <li>data: {'' + web3.toAscii(obj[5])}</li>
+              <li>data: <a href={'' + web3.toAscii(obj[5])}>{'' + web3.toAscii(obj[5])}</a></li>
               <li>proposalType: {obj[6].toNumber()}</li>
               <li>end date: {new Date(obj[7].toNumber()).toLocaleTimeString()}</li>
               <li>voteYes: {obj[1].toNumber()}</li>

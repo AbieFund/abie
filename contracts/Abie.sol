@@ -1,9 +1,9 @@
 //Part of this contract is from the solidity documentation
 pragma solidity ^0.4.8;
 
-/** Prepare fore deploymets:
+/** Prepare for deployments:
  *
- * Add a *100 next to fee in askMembership
+ * Add a *100 fee to askMembership()
  * Switch fee to 0.01 ether
  * Set voteLenght = 15 days
  *
