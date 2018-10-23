@@ -31,7 +31,7 @@ When you're done, please drop a msg in the [Riot chan](https://riot.im/app/#/roo
 
 ## Deployment
 
-To deploy you're own DAO, you can use [Remix](https://remix.ethereum.org) and fill out the `deploy` field with this: 
+To deploy your own DAO, you can use [Remix](https://remix.ethereum.org) and fill out the `deploy` field with this: 
 
 `"0x4162696520446576","0x57652077616e7420746f207465737420416269652e",["<your addr>","<your friend's addr>","0x24cfc8f7ff347c158e6f06c37e94525892b4df44","0xeefb9234302128259d46ed9e223fbc48b5edb5d1"]`
 
