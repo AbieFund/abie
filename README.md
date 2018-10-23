@@ -19,6 +19,8 @@ In your browser:
 * Go to [http://localhost:3000](http://localhost:3000)
 * Click on `Search`.
 
+![alt text](https://i.imgur.com/B3Pwzk4.png)
+
 You're not a member of this DAO so you can't vote, but you can submit a proposal. 
 
 Give it: 
