@@ -18,7 +18,7 @@ contract Abie {
     uint public nbMembers;
     uint public nbProposalsFund;
     uint public nbMembershipReq;
-    uint public registrationTime = 1 years;
+    uint public registrationTime = now + 365 days;
     uint[2] public voteLength = [5 minutes, 5 minutes];
     uint MAX_DELEGATION_DEPTH=10;
     address NOT_COUNTED=0;
@@ -81,7 +81,7 @@ contract Abie {
     }
 
     /// @param initialMembers First members of the organization.
-    function Abie(bytes32 _name, bytes32 _statement, address[] initialMembers) public{
+    constructor(bytes32 _name, bytes32 _statement, address[] initialMembers) public{
         name=_name;
         statement=_statement;
         for (uint i;i<initialMembers.length;++i){
@@ -123,12 +123,12 @@ contract Abie {
     /// Receive funds.
     function () payable public{
         // require(msg.value+address(this).balance >= 1000000000000000000000000);
-        Donated(msg.sender, msg.value);
+        emit Donated(msg.sender, msg.value);
     }
 
     /// Ask for membership.
     function askMembership () payable public costs(fee) {
-         Donated(msg.sender,msg.value); // Register the donation.
+         emit Donated(msg.sender,msg.value); // Register the donation.
 
         // Create a proposal to add the member.
         proposals.push(Proposal({
@@ -149,7 +149,7 @@ contract Abie {
 
     /// Add Proposal.
     function addProposal (bytes32 _name, uint _value, bytes32 _data) payable public costs(fee) {        //require(msg.value+address(this).balance >= address(this).balance);
-        Donated(msg.sender,msg.value); // Register the donation.
+        emit Donated(msg.sender,msg.value); // Register the donation.
         // Create a proposal to add the member.
         proposals.push(Proposal({
           name: _name,
