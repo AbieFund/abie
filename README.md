@@ -24,13 +24,13 @@ In your browser:
 You can: 
 
 * Submit a proposal
-* Vote (for members only)
+* Vote (members only)
 * Count the votes
 * Claim a proposal
 
 ## Deployment
 
-Don't do that if you don't know wat you're doing. The team can't be held  liable or responsible for any damage which results from wild use of [Abie.sol](https://github.com/AbieFund/abie/blob/master/contracts/Abie.sol).
+Don't do that if you don't know what you're doing. The team can't be held  liable or responsible for any damage which results from wild use of [Abie.sol](https://github.com/AbieFund/abie/blob/master/contracts/Abie.sol).
 
 To deploy your own DAO, you can use [Remix](https://remix.ethereum.org).
 
@@ -47,7 +47,6 @@ To learn more about that, a complete tutorial is available on the [Wiki page](ht
 
 We're getting ready to deploy 2 pilots: Abie Dev (See the [1st proposal](https://abiefund.consider.it/abie-dev-first-proposal) and Abie Sting.
 
-
 ## Resources
 
 * New Slides (in French): "[Abie, un système de vote on-chain](https://slides.com/julienbrg/abie)"
@@ -55,4 +54,4 @@ We're getting ready to deploy 2 pilots: Abie Dev (See the [1st proposal](https:/
 * [Trello board](https://trello.com/b/rsZKEFIm/abie)
 * [Abie features](https://docs.google.com/spreadsheets/d/10MxQ_ptFI5Fpj6eNO2iS_5bISSuOUAxudCINUfAKNPc/edit?usp=sharing) (project management)
 
-You can join, we're on [Riot](https://riot.im/app/#/room/#abie:matrix.org)!
+We're on [Riot](https://riot.im/app/#/room/#abie:matrix.org), let's meet!
