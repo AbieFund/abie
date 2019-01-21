@@ -45,7 +45,7 @@ To learn more about that, a complete tutorial is available on the [Wiki page](ht
 
 ## Next step
 
-We're getting ready to deploy 2 pilots: Abie Dev (See the [1st proposal](https://abiefund.consider.it/abie-dev-first-proposal) and Abie Sting.
+We're getting ready to deploy 2 pilots: Abie Dev (See the [1st proposal](https://abiefund.consider.it/abie-dev-first-proposal)) and Abie Sting.
 
 ## Resources
 
@@ -54,4 +54,4 @@ We're getting ready to deploy 2 pilots: Abie Dev (See the [1st proposal](https:/
 * [Trello board](https://trello.com/b/rsZKEFIm/abie)
 * [Abie features](https://docs.google.com/spreadsheets/d/10MxQ_ptFI5Fpj6eNO2iS_5bISSuOUAxudCINUfAKNPc/edit?usp=sharing) (project management)
 
-We're on [Riot](https://riot.im/app/#/room/#abie:matrix.org), let's meet!
+We're on [Riot](https://riot.im/app/#/room/#abie:matrix.org), let's talk!
