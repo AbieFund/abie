@@ -46,6 +46,10 @@ const config = {
         test: /\.scss$/, // All .scss files
         loaders: ['style', 'css', 'sass'],
       },
+      {
+        test: /\.css$/,
+        loaders: ['style-loader', 'css-loader']
+      }
     ],
   },
 };
