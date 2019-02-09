@@ -5,7 +5,6 @@ import { Router, Route, hashHistory } from 'react-router'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import Home from './Home'
-
 import '../www/styles/main.scss'
 
 // Needed for onTouchTap
