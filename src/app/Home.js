@@ -27,6 +27,10 @@ class Home extends Component {
     members: "",
     addresses: [
       {
+        name: "0x791b3c15f838ccc59d5aa015411762fb59a19b9d",
+        value: "0x791b3c15f838ccc59d5aa015411762fb59a19b9d"
+      },
+      {
         name: "0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3",
         value: "0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3"
       },
@@ -36,7 +40,7 @@ class Home extends Component {
       },
       { name: "Other", value: "Other" }
     ],
-    search: "0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3",
+    search: "0x791b3c15f838ccc59d5aa015411762fb59a19b9d",
     loading: false,
     searchBox: false
   };
@@ -235,7 +239,7 @@ class Home extends Component {
       .at(this.state.addressContract)
       .then(contract => {
         return contract.askMembership({
-          value: web3.toWei(10, "ether"),
+          value: web3.toWei(0.001, "ether"),
           from: this.state.accounts[4],
           gas: 4000000
         });
@@ -255,7 +259,7 @@ class Home extends Component {
           web3.toWei(this.state.valueDeposit, "ether"),
           this.state.dataDeposit,
           {
-            value: web3.toWei(0.1, "ether"),
+            value: web3.toWei(0.001, "ether"),
             from: this.state.accounts[0],
             gas: 4000000
           }
@@ -330,7 +334,7 @@ class Home extends Component {
       .at(this.state.addressContract)
       .then(contract => {
         return contract.claim(idx, {
-          value: web3.toWei(0.1, "ether"),
+          value: web3.toWei(0.001, "ether"),
           from: this.state.accounts[0]
         });
       })
@@ -361,7 +365,8 @@ class Home extends Component {
         <div className="row justify-content-center">
           <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6">
             <Loader fullPage loading={loading} />
-            <h3>{this.fromHex(name.replace("0x", ""))}</h3>
+            <h1 className="text-center">{this.fromHex(name.replace("0x", ""))}</h1>
+            <h3 className="text-center">{this.fromHex(statement.replace("0x", ""))}</h3>
             <h4 className="text-center">
               Balance: {balance.toString()} <span>ETH</span>{" "}
             </h4>
@@ -393,62 +398,63 @@ class Home extends Component {
               </button>
             </div>
             <div className="mt-3">
-              <h4>Statement of intent:</h4>
-              {this.fromHex(statement.replace("0x", ""))}
+
               <h5 className="text-center m-3">{members}</h5>
               <div className="form-group">
-                <label className="control-label">Set Delegate</label>
+                <label className="control-label">Select a delegate:</label>
                 <input
                   className="form-control mb-2"
                   type="text"
                   onChange={this.handleChange("delegate")}
+                  placeholder="0x..."
                 />
                 <button
                   className="btn btn-primary btn-block"
                   onClick={this.setDelegate}
                 >
-                  Add address
+                  Set
                 </button>
               </div>
               <div className="form-group">
-                <label className="label-control">Ask Membership</label>
+                <label className="label-control">Submit a membership request:</label>
                 <input
                   type="text"
                   className="form-control mb-2"
                   onChange={this.handleChange("askMembership")}
+                  placeholder="0x..."
                 />
                 <button
                   className="btn btn-primary btn-block"
                   onClick={this.askMembership}
                 >
-                  Ask membership
+                  Submit
                 </button>
               </div>
               <div className="form-group">
-                <label className="label-control">Add proposal&nbsp;</label>
+                <label className="label-control">Submit a proposal:&nbsp;</label>
                 <input
                   type="text"
                   className="form-control mb-2"
                   onChange={e => this.handleChangePropsalName(e.target.value)}
-                  placeholder="Name of the proposition (hex)"
+                  placeholder="My smart proposal"
                 />
                 <input
                   type="text"
                   className="form-control mb-2"
                   onChange={e => this.handleChangeRequestAmount(e.target.value)}
-                  placeholder="Requested amount (Wei)"
+                  placeholder="100 ETH"
                 />
                 <input
                   type="text"
                   className="form-control mb-2"
                   onChange={e => this.handleChangeDescription(e.target.value)}
-                  placeholder="Link IPFS"
+                  placeholder="http://somewhere"
                 />
                 <button
                   className="btn btn-primary btn-block"
                   onClick={this.addProposal}
                 >
-                  Submit add proposal
+                  Submit
                 </button>
               </div>
 
@@ -477,9 +483,7 @@ class Home extends Component {
                       {new Date(obj[7].toNumber()).toLocaleTimeString()}
                     </li>
                     <li className="list-group-item">
-                      VoteYes: {obj[1].toNumber()}
-                      voteNo: {obj[2].toNumber()}(
-                      <i>Will be displayed once counted)</i>
+                      Yes: {obj[1].toNumber()}&nbsp;|&nbsp;No: {obj[2].toNumber()}
                     </li>
                     <li className="list-group-item">
                       lastMemberCounted: {obj[8].toString()}
@@ -502,7 +506,7 @@ class Home extends Component {
                         className="btn btn-primary"
                         onClick={() => this.countAllVotes(index)}
                       >
-                        Count all votes
+                        Count the votes
                       </button>{" "}
                       <button
                         className="btn btn-default"
