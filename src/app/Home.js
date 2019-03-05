@@ -6,7 +6,7 @@ import Abie from "../../build/contracts/Abie.json";
 import "../www/styles/Home.scss";
 import { Loader } from "react-overlay-loader";
 
-const TESTRPC_HOST = "ropsten.infura.io";
+const TESTRPC_HOST = "kovan.infura.io";
 
 class Home extends Component {
   state = {
