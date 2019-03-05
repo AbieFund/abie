@@ -1,3 +1,10 @@
+# EthCC 2019 Workshop info
+
+* Network: Ropsten
+* URL of the app: https://abie-fund.herokuapp.com/#/
+* Contract address: 0xdac953477f1c53f828599411362ad4a1afda9b3d
+* Ropsten Faucet: https://faucet.metamask.io/
+
 # Abie
 
 Abie was first released on March 5th, 2017 with the contribution of the [Ethergency](https://twitter.com/ethergency) team at [Hacker House Paris](http://www.hackerhouse.paris/).
