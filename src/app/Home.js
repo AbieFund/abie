@@ -452,11 +452,13 @@ class Home extends Component {
                 </button>
               </div>
 
-              <h4 className="text-center">Proposals</h4>
+              {proposals.length > 0 && (
+                <h4 className="text-center">Proposals</h4>
+              )}
 
               {proposals.map((obj, index) => (
-                <div className="card p-3">
-                  <ul key={index} className="list-group">
+                <div className="card p-3 mt-4">
+                  <ul key={index} className="list-group mt-3">
                     <li className="list-group-item">
                       Proposal name: {this.fromHex(obj[0].replace("0x", ""))}
                     </li>
@@ -479,7 +481,7 @@ class Home extends Component {
                     </li>
                     <li className="list-group-item">
                       <p>VoteYes: {obj[1].toNumber()}</p>
-                      <p>VoteNo: {obj[2].toNumber()}(</p>
+                      <p>VoteNo: {obj[2].toNumber()}</p>
                       <i>Will be displayed once counted)</i>
                     </li>
                     <li className="list-group-item">
