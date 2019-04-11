@@ -9,37 +9,41 @@ import { Loader } from "react-overlay-loader";
 const TESTRPC_HOST = "ropsten.infura.io";
 
 class Home extends Component {
-  state = {
-    web3: false,
-    balance: 0,
-    addressContract: null,
-    delegate: null,
-    metaContract: null,
-    accounts: null,
-    askMembership: null,
-    web3RPC: null,
-    name: "",
-    searchName: "",
-    valueDeposit: 0,
-    dataDeposit: "",
-    proposals: [],
-    statement: "",
-    members: "",
-    addresses: [
-      {
-        name: "0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3",
-        value: "0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3"
-      },
-      {
-        name: "0xc42e30da7cb0087e6ad9200f876b084e8f72c040",
-        value: "0xc42e30da7cb0087e6ad9200f876b084e8f72c040"
-      },
-      { name: "Other", value: "Other" }
-    ],
-    search: "0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3",
-    loading: false,
-    searchBox: false
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      web3: false,
+      balance: 0,
+      addressContract: null,
+      delegate: null,
+      metaContract: null,
+      accounts: null,
+      askMembership: null,
+      web3RPC: null,
+      name: "",
+      searchName: "",
+      valueDeposit: 0,
+      dataDeposit: "",
+      proposals: [],
+      statement: "",
+      members: "",
+      addresses: [
+        {
+          name: "0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3",
+          value: "0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3"
+        },
+        {
+          name: "0xc42e30da7cb0087e6ad9200f876b084e8f72c040",
+          value: "0xc42e30da7cb0087e6ad9200f876b084e8f72c040"
+        },
+        { name: "Other", value: "Other" }
+      ],
+      search: "0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3",
+      loading: false,
+      searchBox: false,
+      donate: 0
+    };
+  }
 
   componentDidMount() {
     let AbieAddress = this.state.search;
@@ -131,6 +135,10 @@ class Home extends Component {
     this.setState({
       name: hexValue
     });
+  };
+
+  handleChangeDonationValue = event => {
+    this.setState({ donate: event.target.value });
   };
 
   handleChangeDescription = value => {
@@ -345,6 +353,33 @@ class Home extends Component {
       });
   };
 
+  donate = () => {
+    const web3RPC = new Web3(web3.currentProvider);
+    this.setState({ web3RPC });
+    if (this.state.donate > 0) {
+      this.setState({ loading: true });
+      web3.eth.sendTransaction(
+        {
+          from: this.state.accounts[0],
+          gasPrice: "20000000000",
+          gas: 4000000,
+          to: this.state.address,
+          value: web3.toWei(this.state.donate, "ether"),
+          data: "Donation"
+        },
+        (err, transactionHash) => {
+          if (!err) {
+            console.log("Tx ", transactionHash);
+            this.setState({ loading: false });
+          } else {
+            console.log("Error ", err);
+            this.setState({ loading: false });
+          }
+        }
+      );
+    }
+  };
+
   render() {
     const {
       name,
@@ -365,7 +400,27 @@ class Home extends Component {
             <h4 className="text-center">
               Balance: {balance.toString()} <span>ETH</span>{" "}
             </h4>
-            <div className="card p-4">
+            {this.state.search && (
+              <div className="card p-4">
+                <div className="input-group">
+                  <input
+                    type="number"
+                    className="form-control"
+                    placeholder="Donation in ETH"
+                    onChange={this.handleChangeDonationValue}
+                  />
+                  <div className="input-group-append">
+                    <button
+                      onClick={() => this.donate()}
+                      className="btn-primary btn"
+                    >
+                      Donate
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+            <div className="card p-4 mt-4">
               <div className="form-group">
                 <label className="label-control">Contract Address</label>
                 <select
@@ -454,8 +509,8 @@ class Home extends Component {
 
               <h4 className="text-center">Proposals</h4>
 
-              {proposals.map((obj, index) => (
-                <div className="card p-3">
+              <div className="card p-3">
+                {proposals.map((obj, index) => (
                   <ul key={index} className="list-group">
                     <li className="list-group-item">
                       Proposal name: {this.fromHex(obj[0].replace("0x", ""))}
@@ -512,8 +567,8 @@ class Home extends Component {
                       </button>
                     </div>
                   </ul>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>
