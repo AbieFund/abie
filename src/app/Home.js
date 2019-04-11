@@ -18,7 +18,7 @@ class Home extends Component {
     accounts: null,
     askMembership: null,
     web3RPC: null,
-    name: "",
+    nameValue: "",
     searchName: "",
     valueDeposit: 0,
     dataDeposit: "",
@@ -175,7 +175,7 @@ class Home extends Component {
 
   handleNameValue(name) {
     name.then(result => {
-      this.setState({ name: result });
+      this.setState({ nameValue: result });
     });
   }
 
@@ -347,7 +347,7 @@ class Home extends Component {
 
   render() {
     const {
-      name,
+      nameValue,
       balance,
       searchBox,
       addresses,
@@ -361,7 +361,7 @@ class Home extends Component {
         <div className="row justify-content-center">
           <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6">
             <Loader fullPage loading={loading} />
-            <h3>{this.fromHex(name.replace("0x", ""))}</h3>
+            <h3>{this.fromHex(nameValue.replace("0x", ""))}</h3>
             <h4 className="text-center">
               Balance: {balance.toString()} <span>ETH</span>{" "}
             </h4>
