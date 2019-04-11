@@ -1,10 +1,27 @@
+# INSA Presentation & demo
+
+* Network: Ropsten
+* URL of the app: [https://abie-fund.herokuapp.com/](https://abie-fund.herokuapp.com/)
+* Contract address: [0x0e4c1793ec18770827f335fb7270a32504d8bd33](https://ropsten.etherscan.io/address/0x0e4c1793ec18770827f335fb7270a32504d8bd33)
+* Ropsten Faucet: [https://faucet.metamask.io/](https://faucet.metamask.io/)
+* Video: https://youtu.be/A929JiewCwM
+
+# EthCC 2019 Workshop info
+
+* Network: Ropsten
+* URL of the app: https://abie-fund.herokuapp.com/#/
+* Contract address: 0xdac953477f1c53f828599411362ad4a1afda9b3d
+* Ropsten Faucet: https://faucet.metamask.io/
+
 # Abie
 
 Abie was first released on March 5th, 2017 with the contribution of the [Ethergency](https://twitter.com/ethergency) team at [Hacker House Paris](http://www.hackerhouse.paris/).
 
 ## Intro
 
-Abie is a DAO that includes a voting system and a Sybil-resistant membership system. Only the vote of the members can trigger a transaction to the beneficiary. The 'liquid democracy' allows members that don't have any device or Internet access to express their opinion on each incoming proposal.
+Abie is a minimalist DAO that includes a Sybil-resistant voting system based on liquid democracy. Members that don't have any device or Internet access can express their opinion on each incoming proposal.
+
+It's live on Heroku: [try the app now!](https://abie-fund.herokuapp.com)
 
 ## Run
 
@@ -19,9 +36,9 @@ In your browser:
 * Go to [http://localhost:3000](http://localhost:3000)
 * Click on `Search`.
 
-![alt text](https://i.imgur.com/B3Pwzk4.png)
+![alt text](https://i.imgur.com/YZjDTM8.png)
 
-You can: 
+You can:
 
 * Submit a proposal
 * Vote (members only)
@@ -54,4 +71,4 @@ We're getting ready to deploy 2 pilots: Abie Dev (See the [1st proposal](https:/
 * [Trello board](https://trello.com/b/rsZKEFIm/abie)
 * [Abie features](https://docs.google.com/spreadsheets/d/10MxQ_ptFI5Fpj6eNO2iS_5bISSuOUAxudCINUfAKNPc/edit?usp=sharing) (project management)
 
-We're on [Riot](https://riot.im/app/#/room/#abie:matrix.org), let's talk!
+We're on [Twitter](https://twitter.com/AbieFund), [Facebook](https://www.facebook.com/abiefund/) and [Riot](https://riot.im/app/#/room/#abie:matrix.org), let's talk!
