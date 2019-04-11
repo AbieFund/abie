@@ -461,28 +461,29 @@ class Home extends Component {
                       Proposal name: {this.fromHex(obj[0].replace("0x", ""))}
                     </li>
                     <li className="list-group-item">
-                      recipient: {obj[3].toString()}
+                      Recipient: {obj[3].toString()}
                     </li>
                     <li className="list-group-item">
-                      value: {obj[4].toNumber()}
+                      Value:{" "}
+                      {`${web3.fromWei(obj[4].toNumber(), "ether")} Ether`}
                     </li>
                     <li className="list-group-item">
-                      data: {"" + web3.toAscii(obj[5])}
+                      Data: {"" + web3.toAscii(obj[5])}
                     </li>
                     <li className="list-group-item">
-                      proposalType: {obj[6].toNumber()}
+                      Proposal Type: {obj[6].toNumber()}
                     </li>
                     <li className="list-group-item">
                       End Date:{" "}
                       {new Date(obj[7].toNumber()).toLocaleTimeString()}
                     </li>
                     <li className="list-group-item">
-                      VoteYes: {obj[1].toNumber()}
-                      voteNo: {obj[2].toNumber()}(
+                      <p>VoteYes: {obj[1].toNumber()}</p>
+                      <p>VoteNo: {obj[2].toNumber()}(</p>
                       <i>Will be displayed once counted)</i>
                     </li>
                     <li className="list-group-item">
-                      lastMemberCounted: {obj[8].toString()}
+                      Last Member Counted: {obj[8].toString()}
                     </li>
                     <li className="list-group-item">executed: {"" + obj[9]}</li>
                     <div className="btn-group mt-3">
