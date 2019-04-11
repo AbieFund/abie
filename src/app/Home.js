@@ -38,7 +38,8 @@ class Home extends Component {
         ],
         search: "0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3",
         loading: false,
-        searchBox: false
+        searchBox: false,
+        donation: 0
     };
 
     componentDidMount() {
@@ -130,6 +131,12 @@ class Home extends Component {
             valueDeposit: value
         });
     };
+
+    handleChangeDonation = value => {
+        this.setState({
+            donation: value
+        })
+    }
 
     handleChangePropsalName = value => {
         let hexValue = this.toHex(value);
@@ -356,6 +363,19 @@ class Home extends Component {
             });
     };
 
+    donate = () => {
+        this.setState({ loading: true });
+        this.state.metaContract
+            .at(this.state.addressContract)
+            .then(contract => contract.transfer(this.state.accounts[0]))
+            .then(result => {
+                console.log(result);
+            }).catch(err => {
+                this.setState({ loading: false});
+                console.log(err)
+            })
+    }
+
     render() {
         const {
             name,
@@ -372,11 +392,21 @@ class Home extends Component {
                 <div className="row justify-content-center">
                     <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                         <Loader fullPage loading={loading} />
-                        <h3>{this.fromHex(name.replace("0x", ""))}</h3>
+                        <h3 className="text-center">{this.fromHex(name.replace("0x", ""))}</h3>
                         <h4 className="text-center">
                             Balance: {balance.toString()} <span>ETH</span>{" "}
                         </h4>
                         <div className="card p-4">
+                            <form className="form-inline d-flex justify-content-center">
+                                <div className="form-group">
+                                    <input type="text" onChange={this.handleChangeDonation()} className="form-control" placeholder="Donation in ETH" />
+                                    <button onClick={() => this.donate()} className="btn btn-primary">
+                                        Donate
+                                </button>
+                                </div>
+                            </form>
+                        </div>
+                        <div className="card p-4 mt-4">
                             <div className="form-group">
                                 <label className="label-control">Contract Address</label>
                                 <select
