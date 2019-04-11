@@ -1,7 +1,8 @@
 import React from 'react'
-import {render} from 'react-dom'
+import { render } from 'react-dom'
 import injectTapEventPlugin from 'react-tap-event-plugin'
-import { Router, Route, hashHistory } from 'react-router'
+// import { Router, Route, hashHistory } from 'react-router'
+import { BrowserRouter as Router, Route } from "react-router-dom";
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import Home from './Home'
@@ -13,9 +14,11 @@ injectTapEventPlugin();
 
 
 render((
-  <MuiThemeProvider muiTheme={getMuiTheme()}>
-    <Router history={hashHistory}>
-      <Route path="/" component={Home}/>
-    </Router>
-  </MuiThemeProvider>
+    <MuiThemeProvider muiTheme={getMuiTheme()}>
+        <Router>
+            <Route path="/" render={({ location, history }) => {
+                return <Home history={history} />
+            }} />
+        </Router>
+    </MuiThemeProvider>
 ), document.getElementById('app'))
