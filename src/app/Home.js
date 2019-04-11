@@ -303,7 +303,7 @@ class Home extends Component {
       });
   };
 
-  countVotes = idx => {
+  countAllVotes = idx => {
     this.setState({ loading: true });
     this.state.metaContract
       .at(this.state.search)
