@@ -127,7 +127,7 @@ class Home extends Component {
   };
 
   handleChangePropsalName = value => {
-    let hexValue = this.toHex(value);
+    let hexValue = `0x${this.toHex(value)}`;
     this.setState({
       name: hexValue
     });
@@ -394,7 +394,9 @@ class Home extends Component {
             </div>
             <div className="mt-3">
               <h4>Statement of intent:</h4>
-              {this.fromHex(statement.replace("0x", ""))}
+              <p className="text-center">
+                {this.fromHex(statement.replace("0x", ""))}
+              </p>
               <h5 className="text-center m-3">{members}</h5>
               <div className="form-group">
                 <label className="control-label">Set Delegate</label>
