@@ -9,41 +9,41 @@ import { Loader } from "react-overlay-loader";
 const TESTRPC_HOST = "ropsten.infura.io";
 
 class Home extends Component {
-  state = {
-    web3: false,
-    balance: 0,
-    addressContract: null,
-    delegate: null,
-    metaContract: null,
-    accounts: null,
-    askMembership: null,
-    web3RPC: null,
-    name: "",
-    searchName: "",
-    valueDeposit: 0,
-    dataDeposit: "",
-    proposals: [],
-    statement: "",
-    members: "",
-    addresses: [
-      {
-        name: "0x791b3c15f838ccc59d5aa015411762fb59a19b9d",
-        value: "0x791b3c15f838ccc59d5aa015411762fb59a19b9d"
-      },
-      {
-        name: "0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3",
-        value: "0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3"
-      },
-      {
-        name: "0xc42e30da7cb0087e6ad9200f876b084e8f72c040",
-        value: "0xc42e30da7cb0087e6ad9200f876b084e8f72c040"
-      },
-      { name: "Other", value: "Other" }
-    ],
-    search: "0x791b3c15f838ccc59d5aa015411762fb59a19b9d",
-    loading: false,
-    searchBox: false
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      web3: false,
+      balance: 0,
+      addressContract: null,
+      delegate: null,
+      metaContract: null,
+      accounts: null,
+      askMembership: null,
+      web3RPC: null,
+      name: "",
+      searchName: "",
+      valueDeposit: 0,
+      dataDeposit: "",
+      proposals: [],
+      statement: "",
+      members: "",
+      addresses: [
+        {
+          name: "0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3",
+          value: "0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3"
+        },
+        {
+          name: "0xc42e30da7cb0087e6ad9200f876b084e8f72c040",
+          value: "0xc42e30da7cb0087e6ad9200f876b084e8f72c040"
+        },
+        { name: "Other", value: "Other" }
+      ],
+      search: "0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3",
+      loading: false,
+      searchBox: false,
+      donate: 0
+    };
+  }
 
   componentDidMount() {
     let AbieAddress = this.state.search;
@@ -135,6 +135,10 @@ class Home extends Component {
     this.setState({
       name: hexValue
     });
+  };
+
+  handleChangeDonationValue = event => {
+    this.setState({ donate: event.target.value });
   };
 
   handleChangeDescription = value => {
@@ -239,7 +243,7 @@ class Home extends Component {
       .at(this.state.addressContract)
       .then(contract => {
         return contract.askMembership({
-          value: web3.toWei(0.001, "ether"),
+          value: web3.toWei(10, "ether"),
           from: this.state.accounts[4],
           gas: 4000000
         });
@@ -259,7 +263,7 @@ class Home extends Component {
           web3.toWei(this.state.valueDeposit, "ether"),
           this.state.dataDeposit,
           {
-            value: web3.toWei(0.001, "ether"),
+            value: web3.toWei(0.1, "ether"),
             from: this.state.accounts[0],
             gas: 4000000
           }
@@ -334,7 +338,7 @@ class Home extends Component {
       .at(this.state.addressContract)
       .then(contract => {
         return contract.claim(idx, {
-          value: web3.toWei(0.001, "ether"),
+          value: web3.toWei(0.1, "ether"),
           from: this.state.accounts[0]
         });
       })
@@ -347,6 +351,33 @@ class Home extends Component {
         this.setState({ loading: false });
         console.log(err);
       });
+  };
+
+  donate = () => {
+    const web3RPC = new Web3(web3.currentProvider);
+    this.setState({ web3RPC });
+    if (this.state.donate > 0) {
+      this.setState({ loading: true });
+      web3.eth.sendTransaction(
+        {
+          from: this.state.accounts[0],
+          gasPrice: "20000000000",
+          gas: 4000000,
+          to: this.state.address,
+          value: web3.toWei(this.state.donate, "ether"),
+          data: "Donation"
+        },
+        (err, transactionHash) => {
+          if (!err) {
+            console.log("Tx ", transactionHash);
+            this.setState({ loading: false });
+          } else {
+            console.log("Error ", err);
+            this.setState({ loading: false });
+          }
+        }
+      );
+    }
   };
 
   render() {
@@ -365,12 +396,31 @@ class Home extends Component {
         <div className="row justify-content-center">
           <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6">
             <Loader fullPage loading={loading} />
-            <h1 className="text-center">{this.fromHex(name.replace("0x", ""))}</h1>
-            <h3 className="text-center">{this.fromHex(statement.replace("0x", ""))}</h3>
+            <h3>{this.fromHex(name.replace("0x", ""))}</h3>
             <h4 className="text-center">
               Balance: {balance.toString()} <span>ETH</span>{" "}
             </h4>
-            <div className="card p-4">
+            {this.state.search && (
+              <div className="card p-4">
+                <div className="input-group">
+                  <input
+                    type="number"
+                    className="form-control"
+                    placeholder="Donation in ETH"
+                    onChange={this.handleChangeDonationValue}
+                  />
+                  <div className="input-group-append">
+                    <button
+                      onClick={() => this.donate()}
+                      className="btn-primary btn"
+                    >
+                      Donate
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+            <div className="card p-4 mt-4">
               <div className="form-group">
                 <label className="label-control">Contract Address</label>
                 <select
@@ -398,70 +448,69 @@ class Home extends Component {
               </button>
             </div>
             <div className="mt-3">
-
+              <h4>Statement of intent:</h4>
+              {this.fromHex(statement.replace("0x", ""))}
               <h5 className="text-center m-3">{members}</h5>
               <div className="form-group">
-                <label className="control-label">Select a delegate:</label>
+                <label className="control-label">Set Delegate</label>
                 <input
                   className="form-control mb-2"
                   type="text"
                   onChange={this.handleChange("delegate")}
-                  placeholder="0x..."
                 />
                 <button
                   className="btn btn-primary btn-block"
                   onClick={this.setDelegate}
                 >
-                  Set
+                  Add address
                 </button>
               </div>
               <div className="form-group">
-                <label className="label-control">Submit a membership request:</label>
+                <label className="label-control">Ask Membership</label>
                 <input
                   type="text"
                   className="form-control mb-2"
                   onChange={this.handleChange("askMembership")}
-                  placeholder="0x..."
                 />
                 <button
                   className="btn btn-primary btn-block"
                   onClick={this.askMembership}
                 >
-                  Submit
+                  Ask membership
                 </button>
               </div>
               <div className="form-group">
-                <label className="label-control">Submit a proposal:&nbsp;</label>
+                <label className="label-control">Add proposal&nbsp;</label>
                 <input
                   type="text"
                   className="form-control mb-2"
                   onChange={e => this.handleChangePropsalName(e.target.value)}
-                  placeholder="My smart proposal"
+                  placeholder="Name of the proposition (hex)"
                 />
                 <input
                   type="text"
                   className="form-control mb-2"
                   onChange={e => this.handleChangeRequestAmount(e.target.value)}
-                  placeholder="100 ETH"
+                  placeholder="Requested amount (Wei)"
                 />
                 <input
                   type="text"
                   className="form-control mb-2"
                   onChange={e => this.handleChangeDescription(e.target.value)}
-                  placeholder="http://somewhere"
+                  placeholder="Link IPFS"
                 />
                 <button
                   className="btn btn-primary btn-block"
                   onClick={this.addProposal}
                 >
-                  Submit
+                  Submit add proposal
                 </button>
               </div>
 
               <h4 className="text-center">Proposals</h4>
 
-              {proposals.map((obj, index) => (
-                <div className="card p-3">
+              <div className="card p-3">
+                {proposals.map((obj, index) => (
                   <ul key={index} className="list-group">
                     <li className="list-group-item">
                       Proposal name: {this.fromHex(obj[0].replace("0x", ""))}
@@ -483,7 +532,9 @@ class Home extends Component {
                       {new Date(obj[7].toNumber()).toLocaleTimeString()}
                     </li>
                     <li className="list-group-item">
-                      Yes: {obj[1].toNumber()}&nbsp;|&nbsp;No: {obj[2].toNumber()}
+                      VoteYes: {obj[1].toNumber()}
+                      voteNo: {obj[2].toNumber()}(
+                      <i>Will be displayed once counted)</i>
                     </li>
                     <li className="list-group-item">
                       lastMemberCounted: {obj[8].toString()}
@@ -506,7 +557,7 @@ class Home extends Component {
                         className="btn btn-primary"
                         onClick={() => this.countAllVotes(index)}
                       >
-                        Count the votes
+                        Count all votes
                       </button>{" "}
                       <button
                         className="btn btn-default"
@@ -516,8 +567,8 @@ class Home extends Component {
                       </button>
                     </div>
                   </ul>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>
