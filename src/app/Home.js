@@ -9,41 +9,37 @@ import { Loader } from "react-overlay-loader";
 const TESTRPC_HOST = "ropsten.infura.io";
 
 class Home extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      web3: false,
-      balance: 0,
-      addressContract: null,
-      delegate: null,
-      metaContract: null,
-      accounts: null,
-      askMembership: null,
-      web3RPC: null,
-      name: "",
-      searchName: "",
-      valueDeposit: 0,
-      dataDeposit: "",
-      proposals: [],
-      statement: "",
-      members: "",
-      addresses: [
-        {
-          name: "0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3",
-          value: "0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3"
-        },
-        {
-          name: "0xc42e30da7cb0087e6ad9200f876b084e8f72c040",
-          value: "0xc42e30da7cb0087e6ad9200f876b084e8f72c040"
-        },
-        { name: "Other", value: "Other" }
-      ],
-      search: "0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3",
-      loading: false,
-      searchBox: false,
-      donate: 0
-    };
-  }
+  state = {
+    web3: false,
+    balance: 0,
+    addressContract: null,
+    delegate: null,
+    metaContract: null,
+    accounts: null,
+    askMembership: null,
+    web3RPC: null,
+    nameValue: "",
+    searchName: "",
+    valueDeposit: 0,
+    dataDeposit: "",
+    proposals: [],
+    statement: "",
+    members: "",
+    addresses: [
+      {
+        name: "0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3",
+        value: "0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3"
+      },
+      {
+        name: "0xc42e30da7cb0087e6ad9200f876b084e8f72c040",
+        value: "0xc42e30da7cb0087e6ad9200f876b084e8f72c040"
+      },
+      { name: "Other", value: "Other" }
+    ],
+    search: "0xf03003f0f1ca38b8d26b8be44469aba51f31d9f3",
+    loading: false,
+    searchBox: false
+  };
 
   componentDidMount() {
     let AbieAddress = this.state.search;
@@ -131,14 +127,10 @@ class Home extends Component {
   };
 
   handleChangePropsalName = value => {
-    let hexValue = this.toHex(value);
+    let hexValue = `0x${this.toHex(value)}`;
     this.setState({
       name: hexValue
     });
-  };
-
-  handleChangeDonationValue = event => {
-    this.setState({ donate: event.target.value });
   };
 
   handleChangeDescription = value => {
@@ -183,7 +175,7 @@ class Home extends Component {
 
   handleNameValue(name) {
     name.then(result => {
-      this.setState({ name: result });
+      this.setState({ nameValue: result });
     });
   }
 
@@ -311,7 +303,7 @@ class Home extends Component {
       });
   };
 
-  countAllVotes = idx => {
+  countVotes = idx => {
     this.setState({ loading: true });
     this.state.metaContract
       .at(this.state.search)
@@ -353,36 +345,9 @@ class Home extends Component {
       });
   };
 
-  donate = () => {
-    const web3RPC = new Web3(web3.currentProvider);
-    this.setState({ web3RPC });
-    if (this.state.donate > 0) {
-      this.setState({ loading: true });
-      web3.eth.sendTransaction(
-        {
-          from: this.state.accounts[0],
-          gasPrice: "20000000000",
-          gas: 4000000,
-          to: this.state.address,
-          value: web3.toWei(this.state.donate, "ether"),
-          data: "Donation"
-        },
-        (err, transactionHash) => {
-          if (!err) {
-            console.log("Tx ", transactionHash);
-            this.setState({ loading: false });
-          } else {
-            console.log("Error ", err);
-            this.setState({ loading: false });
-          }
-        }
-      );
-    }
-  };
-
   render() {
     const {
-      name,
+      nameValue,
       balance,
       searchBox,
       addresses,
@@ -396,31 +361,11 @@ class Home extends Component {
         <div className="row justify-content-center">
           <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6">
             <Loader fullPage loading={loading} />
-            <h3>{this.fromHex(name.replace("0x", ""))}</h3>
+            <h3>{this.fromHex(nameValue.replace("0x", ""))}</h3>
             <h4 className="text-center">
               Balance: {balance.toString()} <span>ETH</span>{" "}
             </h4>
-            {this.state.search && (
-              <div className="card p-4">
-                <div className="input-group">
-                  <input
-                    type="number"
-                    className="form-control"
-                    placeholder="Donation in ETH"
-                    onChange={this.handleChangeDonationValue}
-                  />
-                  <div className="input-group-append">
-                    <button
-                      onClick={() => this.donate()}
-                      className="btn-primary btn"
-                    >
-                      Donate
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-            <div className="card p-4 mt-4">
+            <div className="card p-4">
               <div className="form-group">
                 <label className="label-control">Contract Address</label>
                 <select
@@ -449,7 +394,9 @@ class Home extends Component {
             </div>
             <div className="mt-3">
               <h4>Statement of intent:</h4>
-              {this.fromHex(statement.replace("0x", ""))}
+              <p className="text-center">
+                {this.fromHex(statement.replace("0x", ""))}
+              </p>
               <h5 className="text-center m-3">{members}</h5>
               <div className="form-group">
                 <label className="control-label">Set Delegate</label>
@@ -507,37 +454,40 @@ class Home extends Component {
                 </button>
               </div>
 
-              <h4 className="text-center">Proposals</h4>
+              {proposals.length > 0 && (
+                <h4 className="text-center">Proposals</h4>
+              )}
 
-              <div className="card p-3">
-                {proposals.map((obj, index) => (
-                  <ul key={index} className="list-group">
+              {proposals.map((obj, index) => (
+                <div className="card p-3 mt-4">
+                  <ul key={index} className="list-group mt-3">
                     <li className="list-group-item">
                       Proposal name: {this.fromHex(obj[0].replace("0x", ""))}
                     </li>
                     <li className="list-group-item">
-                      recipient: {obj[3].toString()}
+                      Recipient: {obj[3].toString()}
                     </li>
                     <li className="list-group-item">
-                      value: {obj[4].toNumber()}
+                      Value:{" "}
+                      {`${web3.fromWei(obj[4].toNumber(), "ether")} Ether`}
                     </li>
                     <li className="list-group-item">
-                      data: {"" + web3.toAscii(obj[5])}
+                      Data: {"" + web3.toAscii(obj[5])}
                     </li>
                     <li className="list-group-item">
-                      proposalType: {obj[6].toNumber()}
+                      Proposal Type: {obj[6].toNumber()}
                     </li>
                     <li className="list-group-item">
                       End Date:{" "}
                       {new Date(obj[7].toNumber()).toLocaleTimeString()}
                     </li>
                     <li className="list-group-item">
-                      VoteYes: {obj[1].toNumber()}
-                      voteNo: {obj[2].toNumber()}(
+                      <p>VoteYes: {obj[1].toNumber()}</p>
+                      <p>VoteNo: {obj[2].toNumber()}</p>
                       <i>Will be displayed once counted)</i>
                     </li>
                     <li className="list-group-item">
-                      lastMemberCounted: {obj[8].toString()}
+                      Last Member Counted: {obj[8].toString()}
                     </li>
                     <li className="list-group-item">executed: {"" + obj[9]}</li>
                     <div className="btn-group mt-3">
@@ -567,8 +517,8 @@ class Home extends Component {
                       </button>
                     </div>
                   </ul>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
