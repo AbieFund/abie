@@ -132,9 +132,9 @@ class Home extends Component {
         });
     };
 
-    handleChangeDonation = value => {
+    handleChangeDonation = e => {
         this.setState({
-            donation: value
+            donation: e.target.value
         })
     }
 
@@ -399,7 +399,7 @@ class Home extends Component {
                         <div className="card p-4">
                             <form className="form-inline d-flex justify-content-center">
                                 <div className="form-group">
-                                    <input type="text" onChange={this.handleChangeDonation()} className="form-control" placeholder="Donation in ETH" />
+                                    <input type="text" onChange={(e) => this.handleChangeDonation(e)} className="form-control" placeholder="Donation in ETH" />
                                     <button onClick={() => this.donate()} className="btn btn-primary">
                                         Donate
                                 </button>
