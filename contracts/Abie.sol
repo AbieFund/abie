@@ -18,11 +18,11 @@ contract Abie {
     uint public nbMembers;
     uint public nbProposalsFund;
     uint public nbMembershipReq;
-    uint public registrationTime = 365;
-    uint[2] public voteLength = [5 minutes, 5 minutes];
+    uint public registrationTime = 365 days;
+    uint[2] public voteLength = [3 minutes, 3 minutes];
     uint MAX_DELEGATION_DEPTH=10;
-    address payable NOT_COUNTED= address(0);
-    address payable COUNTED= address(1);
+    address NOT_COUNTED= address(0);
+    address COUNTED= address(1);
 
     event Donated(address donor, uint amount);
 
@@ -122,7 +122,6 @@ contract Abie {
 
     /// Receive funds.
     function () payable external{
-        // require(msg.value+address(this).balance >= 1000000000000000000000000);
         emit Donated(msg.sender, msg.value);
     }
 
@@ -139,7 +138,7 @@ contract Abie {
           value: 0x0,
           data: 0x0,
           proposalType: ProposalType.AddMember,
-          endDate: now + 5 minutes,
+          endDate: now + 3 minutes,
           lastMemberCounted: address(0),
           executed: false
         }));
@@ -159,7 +158,7 @@ contract Abie {
           value: _value,
           data: _data,
           proposalType: ProposalType.FundProject,
-          endDate: now + 5 minutes,
+          endDate: now + 3 minutes,
           lastMemberCounted: address(0),
           executed: false
         }));
@@ -249,7 +248,6 @@ contract Abie {
 
     }
 
-    // The following function has NOT been reviewed so far.
     function claim(uint proposalID) public payable costs(fee) {
         Proposal storage proposal = proposals[proposalID];
         address beneficiary = proposal.recipient;
@@ -300,7 +298,7 @@ contract Abie {
         return address(this).balance;
     }
 
- function timeLeft(uint proposalID) public view returns(uint256) {
+    function timeLeft(uint proposalID) public view returns(uint256) {
         Proposal storage proposal = proposals[proposalID];
         return proposal.endDate - now;
     }
