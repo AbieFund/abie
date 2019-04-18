@@ -147,7 +147,7 @@ contract Abie {
     }
 
     /// Add Proposal.
-    function addProposal (bytes32 _name, uint _value, bytes32 _data) payable public costs(fee) {        //require(msg.value+address(this).balance >= address(this).balance);
+    function addProposal (bytes32 _name, uint _value, bytes32 _data) payable public costs(fee) {
         emit Donated(msg.sender,msg.value); // Register the donation.
         // Create a proposal to add the member.
         proposals.push(Proposal({
