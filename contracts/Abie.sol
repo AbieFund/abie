@@ -1,5 +1,5 @@
 //Part of this contract is from the solidity documentation
-pragma solidity ^0.5.7;
+pragma solidity ^0.4.8;
 
 /** Prepare for deployments:
  *
@@ -18,11 +18,11 @@ contract Abie {
     uint public nbMembers;
     uint public nbProposalsFund;
     uint public nbMembershipReq;
-    uint public registrationTime = 365;
-    uint[2] public voteLength = [5 minutes, 5 minutes];
+    uint public registrationTime = 1 years;
+    uint[2] public voteLength = [2 minutes, 2 minutes];
     uint MAX_DELEGATION_DEPTH=10;
-    address payable NOT_COUNTED= address(0);
-    address payable COUNTED= address(1);
+    address NOT_COUNTED=0;
+    address COUNTED=1;
 
     event Donated(address donor, uint amount);
 
@@ -81,7 +81,7 @@ contract Abie {
     }
 
     /// @param initialMembers First members of the organization.
-    constructor(bytes32 _name, bytes32 _statement, address[] memory initialMembers) public{
+    function Abie(bytes32 _name, bytes32 _statement, address[] initialMembers) public{
         name=_name;
         statement=_statement;
         for (uint i;i<initialMembers.length;++i){
@@ -121,14 +121,14 @@ contract Abie {
     }
 
     /// Receive funds.
-    function () payable external{
+    function () payable public{
         // require(msg.value+address(this).balance >= 1000000000000000000000000);
-        emit Donated(msg.sender, msg.value);
+        Donated(msg.sender, msg.value);
     }
 
     /// Ask for membership.
     function askMembership () payable public costs(fee) {
-         emit Donated(msg.sender,msg.value); // Register the donation.
+         Donated(msg.sender,msg.value); // Register the donation.
 
         // Create a proposal to add the member.
         proposals.push(Proposal({
@@ -139,8 +139,8 @@ contract Abie {
           value: 0x0,
           data: 0x0,
           proposalType: ProposalType.AddMember,
-          endDate: now + 5 minutes,
-          lastMemberCounted: address(0),
+          endDate: now + 2 minutes,
+          lastMemberCounted: 0,
           executed: false
         }));
 
@@ -149,7 +149,7 @@ contract Abie {
 
     /// Add Proposal.
     function addProposal (bytes32 _name, uint _value, bytes32 _data) payable public costs(fee) {        //require(msg.value+address(this).balance >= address(this).balance);
-        emit Donated(msg.sender,msg.value); // Register the donation.
+        Donated(msg.sender,msg.value); // Register the donation.
         // Create a proposal to add the member.
         proposals.push(Proposal({
           name: _name,
@@ -159,8 +159,8 @@ contract Abie {
           value: _value,
           data: _data,
           proposalType: ProposalType.FundProject,
-          endDate: now + 5 minutes,
-          lastMemberCounted: address(0),
+          endDate: now + 2 minutes,
+          lastMemberCounted: 0,
           executed: false
         }));
 
@@ -196,12 +196,12 @@ contract Abie {
         Proposal storage proposal = proposals[proposalID];
         address current;
         require (proposal.endDate <= now); // You can't count while the vote is not over.
-        require (address(proposal.lastMemberCounted) != COUNTED); // The count is already over
+        require (proposal.lastMemberCounted != COUNTED); // The count is already over
 
-        if (address(proposal.lastMemberCounted) == NOT_COUNTED)
+        if (proposal.lastMemberCounted == NOT_COUNTED)
             current = memberList.first;
         else
-            current = address(proposal.lastMemberCounted);
+            current = proposal.lastMemberCounted;
 
         while (max-- != 0) {
             Member storage member = members[current];
@@ -215,7 +215,7 @@ contract Abie {
                         depth+=1;
                         delegate=members[delegate].delegate[uint(proposal.proposalType)]; // Find the delegate.
                         if (delegate==current // The delegation chain forms a circle.
-                            || delegate==address(0)  // Has not set a delegate.
+                            || delegate==0  // Has not set a delegate.
                             || depth>MAX_DELEGATION_DEPTH) { // Too much depth, we must limit it in order to avoid some circle of delegation made to consume too much gaz.
                            break;
                         }
@@ -233,8 +233,8 @@ contract Abie {
             }
 
             current=member.succ; // In next iteration start from the next node.
-            if (current==address(0)) { // We reached the last member.
-                proposal.lastMemberCounted=address(0);
+            if (current==0) { // We reached the last member.
+                proposal.lastMemberCounted=COUNTED;
                 break;
             }
         }
@@ -249,7 +249,6 @@ contract Abie {
 
     }
 
-    // The following function has NOT been reviewed so far.
     function claim(uint proposalID) public payable costs(fee) {
         Proposal storage proposal = proposals[proposalID];
         address beneficiary = proposal.recipient;
@@ -259,7 +258,7 @@ contract Abie {
         require(proposal.executed == false); // rejected if executed already
         require (beneficiary == msg.sender); // rejected if caller is not the beneficiary
         proposal.executed = true; // The proposal was executed.
-        address(uint160(beneficiary)).transfer(check); // The beneficiary gets the requested amount.
+        beneficiary.transfer(check); // The beneficiary gets the requested amount.
     }
 
     /// CONSTANTS ///
@@ -268,14 +267,14 @@ contract Abie {
      *  @param member member to get the delegate from.
      *  @param proposalType 0 for AddMember, 1 for FundProject.
      */
-    function getDelegate(address member, uint8 proposalType) public view returns (address){
+    function getDelegate(address member, uint8 proposalType) public constant returns (address){
         return members[member].delegate[proposalType];
     }
 
     /** Return true if the proposal is validated, false otherwise.
      *  @param proposalID ID of the proposal to count votes from.
      */
-    function isExecutable(uint proposalID) public view returns (bool) {
+    function isExecutable(uint proposalID) public constant returns (bool) {
         Proposal storage proposal = proposals[proposalID];
 
         if (proposal.lastMemberCounted != COUNTED) // Not counted yet.
@@ -288,7 +287,7 @@ contract Abie {
         return (proposal.voteYes>proposal.voteNo);
     }
 
-    function isValidMember(address m) public view returns(bool) {
+    function isValidMember(address m) public constant returns(bool) {
         if (members[m].registration==0) // Not a member.
             return false;
         if (members[m].registration+registrationTime<now) // Has expired.
@@ -296,11 +295,11 @@ contract Abie {
         return true;
     }
 
-    function contractBalance() public view returns(uint256) {
+    function contractBalance() public constant returns(uint256) {
         return address(this).balance;
     }
 
- function timeLeft(uint proposalID) public view returns(uint256) {
+ function timeLeft(uint proposalID) public constant returns(uint256) {
         Proposal storage proposal = proposals[proposalID];
         return proposal.endDate - now;
     }

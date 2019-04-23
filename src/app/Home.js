@@ -28,8 +28,8 @@ class Home extends Component {
     members: "",
     addresses: [
       {
-        name: "0x478a7b3aa21a8775e476c40389ea593be607717e",
-        value: "0x478a7b3aa21a8775e476c40389ea593be607717e"
+        name: "0xeaeaff11f2a2df90d89bb686fbd23d3ddf6090e0",
+        value: "0xeaeaff11f2a2df90d89bb686fbd23d3ddf6090e0"
       },
       {
         name: "0xc42e30da7cb0087e6ad9200f876b084e8f72c040",
@@ -37,13 +37,13 @@ class Home extends Component {
       },
       { name: "Other", value: "Other" }
     ],
-    search: "0x478a7b3aa21a8775e476c40389ea593be607717e",
+    search: "0xeaeaff11f2a2df90d89bb686fbd23d3ddf6090e0",
     loading: false,
     searchBox: false,
     donation: 0
   };
 
-  componentDidMount() {
+  componentWillMount() {
     let address = this.props.location.search;
     if (address && address.split("?")[1].split("=")[0] === "address") {
       let AbieAddress = address.split("?")[1].split("=")[1];
@@ -65,6 +65,27 @@ class Home extends Component {
       } else {
         alert("install Metamask or use Mist");
       }
+    }
+  }
+
+  componentDidMount() {
+    let address = this.props.location.search;
+    if (address && address.split("?")[1].split("=")[0] === "address") {
+      let AbieAddress = address.split("?")[1].split("=")[1];
+      this.state.metaContract
+        .at(AbieAddress)
+        .then(contract => {
+          this.handleNameValue(contract.name());
+          this.loadProposals(AbieAddress);
+          this.loadStatements(AbieAddress);
+          this.loadMemberList(AbieAddress);
+          return contract.contractBalance();
+        })
+        .then(result => {
+          const etherValue = web3.fromWei(result, "ether");
+          this.setState({ balance: etherValue });
+        })
+        .catch(err => console.log(err));
     }
   }
 
