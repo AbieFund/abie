@@ -354,7 +354,7 @@ class Home extends Component {
       });
   };
 
-  countVotes = idx => {
+  countAllVotes = idx => {
     this.setState({ loading: true });
     this.state.metaContract
       .at(this.state.search)
@@ -396,8 +396,10 @@ class Home extends Component {
       });
   };
 
-  donate = () => {
+  donate = (e) => {
+    e.preventDefault();
     this.setState({ loading: true });
+    console.log(this.state.accounts[0]);
     this.state.metaContract
       .at(this.state.addressContract)
       .then(contract => contract.transfer(this.state.accounts[0]))
