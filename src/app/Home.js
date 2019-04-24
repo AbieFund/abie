@@ -43,50 +43,72 @@ class Home extends Component {
     donation: 0
   };
 
-  componentWillMount() {
-    let address = this.props.location.search;
-    if (address && address.split("?")[1].split("=")[0] === "address") {
-      let AbieAddress = address.split("?")[1].split("=")[1];
-      if (typeof web3 !== "undefined") {
-        this.setState({ web3: true });
-        this.loadProposals(AbieAddress);
-        this.loadMemberList(AbieAddress);
-        this.loadStatements(AbieAddress);
-      } else {
-        alert("install Metamask or use Mist");
-      }
-    } else {
-      let AbieAddress = this.state.search;
-      if (typeof web3 !== "undefined") {
-        this.setState({ web3: true });
-        this.loadProposals(AbieAddress);
-        this.loadMemberList(AbieAddress);
-        this.loadStatements(AbieAddress);
-      } else {
-        alert("install Metamask or use Mist");
-      }
-    }
-  }
+  // componentWillMount() {
+  //   let address = this.props.location.search;
+  //   if (address && address.split("?")[1].split("=")[0] === "address") {
+  //     let AbieAddress = address.split("?")[1].split("=")[1];
+  //     if (typeof web3 !== "undefined") {
+  //       this.setState({ web3: true });
+  //       this.loadProposals(AbieAddress);
+  //       this.loadMemberList(AbieAddress);
+  //       this.loadStatements(AbieAddress);
+  //     } else {
+  //       alert("install Metamask or use Mist");
+  //     }
+  //   } else {
+  //     let AbieAddress = this.state.search;
+  //     if (typeof web3 !== "undefined") {
+  //       this.setState({ web3: true });
+  //       this.loadProposals(AbieAddress);
+  //       this.loadMemberList(AbieAddress);
+  //       this.loadStatements(AbieAddress);
+  //     } else {
+  //       alert("install Metamask or use Mist");
+  //     }
+  //   }
+  // }
+
+  search = () => {
+    this.updateURL(this.state.search);
+    this.state.metaContract
+      .at(this.state.search)
+      .then(contract => {
+        this.handleNameValue(contract.name());
+        this.loadProposals(this.state.search);
+        this.loadMemberList(this.state.search);
+        this.loadStatements(this.state.search);
+        return contract.contractBalance();
+      })
+      .then(result => {
+        const etherValue = web3.fromWei(result, "ether");
+        this.setState({ balance: etherValue });
+      })
+      .catch(err => console.log(err));
+  };
 
   componentDidMount() {
-    let address = this.props.location.search;
-    if (address && address.split("?")[1].split("=")[0] === "address") {
-      let AbieAddress = address.split("?")[1].split("=")[1];
-      this.state.metaContract
-        .at(AbieAddress)
-        .then(contract => {
-          this.handleNameValue(contract.name());
-          this.loadProposals(AbieAddress);
-          this.loadStatements(AbieAddress);
-          this.loadMemberList(AbieAddress);
-          return contract.contractBalance();
-        })
-        .then(result => {
-          const etherValue = web3.fromWei(result, "ether");
-          this.setState({ balance: etherValue });
-        })
-        .catch(err => console.log(err));
-    }
+    let AbieAddress = this.state.search;
+    this.updateURL(AbieAddress);
+    let meta = contract(Abie);
+    this.setState({ metaContract: meta });
+    meta.setProvider(web3.currentProvider);
+    const web3RPC = new Web3(web3.currentProvider);
+    setTimeout(() => {
+      if (typeof web3 !== "undefined") {
+        this.setState({ web3: true });
+        meta
+          .at(AbieAddress)
+          .then(contract => {
+            this.handleNameValue(contract.name());
+            this.loadProposals(AbieAddress);
+            this.loadMemberList(AbieAddress);
+            this.loadStatements(AbieAddress);
+          })
+          .catch(err => console.log(err));
+      } else {
+        alert("install Metamask or use Mist");
+      }
+    }, 1000);
   }
 
   setParams = ({ address }) => {
@@ -204,24 +226,6 @@ class Home extends Component {
   updateURL = address => {
     const url = this.setParams({ address });
     this.props.history.push(`?${url}`);
-  };
-
-  search = () => {
-    this.updateURL(this.state.search);
-    this.state.metaContract
-      .at(this.state.search)
-      .then(contract => {
-        this.handleNameValue(contract.name());
-        this.loadProposals(this.state.search);
-        this.loadStatements(this.state.search);
-        this.loadMemberList(this.state.search);
-        return contract.contractBalance();
-      })
-      .then(result => {
-        const etherValue = web3.fromWei(result, "ether");
-        this.setState({ balance: etherValue });
-      })
-      .catch(err => console.log(err));
   };
 
   handleNameValue(name) {
@@ -354,7 +358,7 @@ class Home extends Component {
       });
   };
 
-  countVotes = idx => {
+  countAllVotes = idx => {
     this.setState({ loading: true });
     this.state.metaContract
       .at(this.state.search)
@@ -396,8 +400,10 @@ class Home extends Component {
       });
   };
 
-  donate = () => {
+  donate = e => {
+    e.preventDefault();
     this.setState({ loading: true });
+    console.log(this.state.accounts[0]);
     this.state.metaContract
       .at(this.state.addressContract)
       .then(contract => contract.transfer(this.state.accounts[0]))
