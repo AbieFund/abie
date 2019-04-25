@@ -467,21 +467,24 @@ class Home extends Component {
             <div className="card p-4 mt-4">
               <div className="form-group">
                 <label className="label-control">Contract Address</label>
-                <select
-                  className="form-control"
-                  onChange={this.handleChange("search")}
-                >
-                  {addresses.map(item => (
-                    <option key={item.value} value={item.value}>
-                      {item.name}
-                    </option>
-                  ))}
-                </select>
+                {!this.state.search && (
+                  <select
+                    className="form-control"
+                    onChange={this.handleChange("search")}
+                  >
+                    {addresses.map(item => (
+                      <option key={item.value} value={item.value}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
-              {searchBox ? (
+              {searchBox || this.state.search ? (
                 <input
                   className="form-control mb-3"
                   type="text"
+                  value={this.state.search}
                   onChange={this.handleChange("search")}
                 />
               ) : (
