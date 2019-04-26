@@ -92,7 +92,6 @@ class Home extends Component {
     let meta = contract(Abie);
     this.setState({ metaContract: meta });
     meta.setProvider(web3.currentProvider);
-    const web3RPC = new Web3(web3.currentProvider);
     setTimeout(() => {
       if (typeof web3 !== "undefined") {
         this.setState({ web3: true });
@@ -103,6 +102,11 @@ class Home extends Component {
             this.loadProposals(AbieAddress);
             this.loadMemberList(AbieAddress);
             this.loadStatements(AbieAddress);
+            return contract.contractBalance();
+          })
+          .then(result => {
+            const etherValue = web3.fromWei(result, "ether");
+            this.setState({ balance: etherValue });
           })
           .catch(err => console.log(err));
       } else {
@@ -403,17 +407,21 @@ class Home extends Component {
   donate = e => {
     e.preventDefault();
     this.setState({ loading: true });
-    console.log(this.state.accounts[0]);
-    this.state.metaContract
-      .at(this.state.addressContract)
-      .then(contract => contract.transfer(this.state.accounts[0]))
-      .then(result => {
-        console.log(result);
-      })
-      .catch(err => {
+    web3.eth.sendTransaction(
+      {
+        from: web3.eth.accounts[0],
+        to: this.state.addressContract,
+        value: web3.toWei(this.state.donation.toString(), "ether")
+      },
+      (err, hash) => {
         this.setState({ loading: false });
-        console.log(err);
-      });
+        if (hash) {
+          console.log("Transaction hash: ", hash);
+        } else if (err) {
+          console.log("Error: ", err);
+        }
+      }
+    );
   };
 
   render() {
@@ -448,7 +456,7 @@ class Home extends Component {
                     placeholder="Donation in ETH"
                   />
                   <button
-                    onClick={() => this.donate()}
+                    onClick={e => this.donate(e)}
                     className="btn btn-primary"
                   >
                     Donate
@@ -459,21 +467,24 @@ class Home extends Component {
             <div className="card p-4 mt-4">
               <div className="form-group">
                 <label className="label-control">Contract Address</label>
-                <select
-                  className="form-control"
-                  onChange={this.handleChange("search")}
-                >
-                  {addresses.map(item => (
-                    <option key={item.value} value={item.value}>
-                      {item.name}
-                    </option>
-                  ))}
-                </select>
+                {!this.state.search && (
+                  <select
+                    className="form-control"
+                    onChange={this.handleChange("search")}
+                  >
+                    {addresses.map(item => (
+                      <option key={item.value} value={item.value}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
-              {searchBox ? (
+              {searchBox || this.state.search ? (
                 <input
                   className="form-control mb-3"
                   type="text"
+                  value={this.state.search}
                   onChange={this.handleChange("search")}
                 />
               ) : (
