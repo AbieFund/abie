@@ -18,8 +18,8 @@ contract Abie {
     uint public nbMembers;
     uint public nbProposalsFund;
     uint public nbMembershipReq;
-    uint public registrationTime = 1 years;
-    uint[2] public voteLength = [5 minutes, 5 minutes];
+    uint public registrationTime = 365 days;
+    uint[2] public voteLength = [2 minutes, 2 minutes];
     uint MAX_DELEGATION_DEPTH=10;
     address NOT_COUNTED=0;
     address COUNTED=1;
@@ -122,7 +122,6 @@ contract Abie {
 
     /// Receive funds.
     function () payable public{
-        // require(msg.value+address(this).balance >= 1000000000000000000000000);
         Donated(msg.sender, msg.value);
     }
 
@@ -139,7 +138,7 @@ contract Abie {
           value: 0x0,
           data: 0x0,
           proposalType: ProposalType.AddMember,
-          endDate: now + 5 minutes,
+          endDate: now + 2 minutes,
           lastMemberCounted: 0,
           executed: false
         }));
@@ -159,7 +158,7 @@ contract Abie {
           value: _value,
           data: _data,
           proposalType: ProposalType.FundProject,
-          endDate: now + 5 minutes,
+          endDate: now + 2 minutes,
           lastMemberCounted: 0,
           executed: false
         }));
@@ -249,7 +248,6 @@ contract Abie {
 
     }
 
-    // The following function has NOT been reviewed so far.
     function claim(uint proposalID) public payable costs(fee) {
         Proposal storage proposal = proposals[proposalID];
         address beneficiary = proposal.recipient;

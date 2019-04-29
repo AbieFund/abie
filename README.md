@@ -21,8 +21,6 @@ In your browser:
 * Go to [http://localhost:3000](http://localhost:3000)
 * Click on `Search`.
 
-![alt text](https://i.imgur.com/YZjDTM8.png)
-
 You can:
 
 * Submit a proposal
@@ -32,7 +30,7 @@ You can:
 
 ## Deployment
 
-Don't do that if you don't know what you're doing. The team can't be held  liable or responsible for any damage which results from wild use of [Abie.sol](https://github.com/AbieFund/abie/blob/master/contracts/Abie.sol).
+We don't recommend the deployment if you're not 100% sure of what you're doing. 
 
 To deploy your own DAO, you can use [Remix](https://remix.ethereum.org).
 
@@ -41,22 +39,20 @@ To deploy your own DAO, you can use [Remix](https://remix.ethereum.org).
 * Do the same for the `statement`.
 * Now the `deploy` field should look like this:
 
-`"0x4162696520446576","0x57652077616e7420746f207465737420416269652e",["<your addr>","<another member addr>","0x24cfc8f7ff347c158e6f06c37e94525892b4df44","0xeefb9234302128259d46ed9e223fbc48b5edb5d1"]`
+`"0x4162696520446576","0x57652077616e7420746f207465737420416269652e",["0x24cfc8f7ff347c158e6f06c37e94525892b4df44","0xeefb9234302128259d46ed9e223fbc48b5edb5d1"]`
 
-To learn more about that, a complete tutorial is available on the [Wiki page](https://github.com/AbieFund/abie/wiki/Abie-Wiki).
+To learn more about the deployment, a complete tutorial is available on the [Wiki page](https://github.com/AbieFund/abie/wiki/Abie-Wiki).
 
 ## Next step
 
-We're getting ready to deploy 2 pilots: Abie Dev (See the [1st proposal](https://abiefund.consider.it/abie-dev-first-proposal)) and Abie Sting.
+We're getting ready to deploy 2 pilots: Abie Dev (See the [1st proposal](https://abiefund.consider.it/abie-dev-first-proposal)) and [Abie Sting](https://abiefund.consider.it/abie-sting-first-proposal).
 
 ## Resources
 
-* New Slides (in French): "[Abie, un système de vote on-chain](https://slides.com/julienbrg/abie)"
+* Slides (in French): "[Abie, un système de vote on-chain](https://slides.com/julienbrg/abie-6)"
 * [Abie Wiki](https://github.com/AbieFund/abie/wiki/Abie-Wiki)
-* [Trello board](https://trello.com/b/rsZKEFIm/abie)
-* [Abie features](https://docs.google.com/spreadsheets/d/10MxQ_ptFI5Fpj6eNO2iS_5bISSuOUAxudCINUfAKNPc/edit?usp=sharing) (project management)
 
-We're on [Twitter](https://twitter.com/AbieFund), [Facebook](https://www.facebook.com/abiefund/) and [Riot](https://riot.im/app/#/room/#abie:matrix.org), let's talk!
+We're on [Twitter](https://twitter.com/AbieFund), [Facebook](https://www.facebook.com/abiefund/) and [Gitter](https://riot.im/app/#/room/#abie:matrix.org).
 
 ### EthCC 2019 Workshop info
 
